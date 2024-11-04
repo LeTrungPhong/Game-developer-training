@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        <canvas
+            id="canvas"
+            width="750"
+            height="400"
+            style="border: 1px solid lightgrey"
+        >
+            Your browser does not support the HTML5 canvas tag.
+        </canvas>
+
+        <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+        <!-- <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
+        <path style="fill:#D75A4A;" d="M24.85,10.126c2.018-4.783,6.628-8.125,11.99-8.125c7.223,0,12.425,6.179,13.079,13.543 c0,0,0.353,1.828-0.424,5.119c-1.058,4.482-3.545,8.464-6.898,11.503L24.85,48L7.402,32.165c-3.353-3.038-5.84-7.021-6.898-11.503 c-0.777-3.291-0.424-5.119-0.424-5.119C0.734,8.179,5.936,2,13.159,2C18.522,2,22.832,5.343,24.85,10.126z"/> -->
+    </body>
+    <script>
+        "use strict";
+        let canvas;
+        let context;
+
+        window.onload = init;
+
+        function init() {
+            // Get a reference to the canvas
+            canvas = document.getElementById("canvas");
+            context = canvas.getContext("2d");
+
+            draw();
+        }
+
+        function draw() {
+            // Get a random color, red or blue
+            let randomColor = Math.random() > 0.5 ? "#ff8080" : "#0099b0";
+
+            // Draw a rectangle
+            context.fillStyle = randomColor;
+            context.fillRect(400, 50, 200, 175);
+            context.fill();
+
+            context.beginPath();
+            context.arc(200, 100, 50, 0, 2 * Math.PI);
+            context.fill();
+
+            context.beginPath();
+            context.moveTo(50, 300);
+            context.lineTo(250, 150);
+            context.strokeStyle = "#0099b0";
+            context.stroke();
+            context.fill();
+
+            context.beginPath();
+            context.moveTo(350, 100);
+            context.lineTo(300, 150);
+            context.lineTo(300, 50);
+            context.fill();
+
+            context.strokeRect(100, 50, 100, 125);
+
+            context.strokeStyle = "#ff8080";
+            context.stroke();
+
+            context.fillStyle = "#0099b0";
+            context.fill();
+
+            context.lineWidth = 5;
+
+            let path = new Path2D(
+                "M24.85,10.126c2.018-4.783,6.628-8.125,11.99-8.125c7.223,0,12.425,6.179,13.079,13.543 c0,0,0.353,1.828-0.424,5.119c-1.058,4.482-3.545,8.464-6.898,11.503L24.85,48L7.402,32.165c-3.353-3.038-5.84-7.021-6.898-11.503 c-0.777-3.291-0.424-5.119-0.424-5.119C0.734,8.179,5.936,2,13.159,2C18.522,2,22.832,5.343,24.85,10.126z"
+            );
+
+            context.beginPath();
+            context.strokeStyle = "#0099b0";
+            context.fillStyle = "#ff8080";
+            context.stroke(path);
+            context.fill(path);
+
+            context.font = "25px Arial";
+            context.textAlign = "right";
+            context.textBaseline = "bottom";
+            context.fillStyle = "black";
+            context.fillText("Some text", 200, 100);
+        }
+    </script>
+</html>

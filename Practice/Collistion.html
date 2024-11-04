@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body>
+        <canvas
+            id="canvas"
+            width="750"
+            height="400"
+            style="border: 1px solid lightgrey"
+        >
+            Your browser does not support the HTML5 canvas tag.
+        </canvas>
+    </body>
+    <script>
+        let canvas;
+        let context;
+
+        window.onload = init;
+
+        function init() {
+            canvas = document.getElementById("canvas");
+            context = canvas.getContext("2d");
+
+            createCircle();
+
+            window.requestAnimationFrame(gameLoop);
+        }
+
+        class GameObject {
+            constructor(context, x, y, vx, vy) {
+                this.context = context;
+                this.x = x;
+                this.y = y;
+                this.vx = vx;
+                this.vy = vy;
+
+                this.isColliding = false;
+            }
+        }
+
+        class Square extends GameObject {
+            constructor(context, x, y, vx, vy) {
+                super(context, x, y, vx, vy);
+
+                this.width = 50;
+                this.height = 50;
+            }
+
+            draw() {
+                this.context.fillStyle = this.isColliding
+                    ? "#ff8080"
+                    : "#0099b0";
+                this.context.fillRect(this.x, this.y, this.width, this.height);
+            }
+
+            update(secondsPassed) {
+                this.x = this.x + this.vx * secondsPassed;
+                this.y = this.y + this.vy * secondsPassed;
+            }
+        }
+
+        let gameObjects;
+        let oldTimeStamp = 0;
+        let secondsPassed = 0;
+
+        // function createWorld() {
+        //     gameObjects = [
+        //         new Square(context, 250, 50, 0, 50),
+        //         new Square(context, 250, 300, 0, -50),
+        //         new Square(context, 150, 0, 50, 50),
+        //         new Square(context, 250, 150, 50, 50),
+        //         new Square(context, 350, 75, -50, 50),
+        //         new Square(context, 300, 300, 50, -50),
+        //     ];
+        // }
+
+        function clearCanvas() {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // function gameLoop(timeStamp) {
+        //     secondsPassed = (timeStamp - oldTimeStamp) / 1000;
+        //     oldTimeStamp = timeStamp;
+
+        //     for (let i = 0; i < gameObjects.length; i++) {
+        //         gameObjects[i].update(secondsPassed);
+        //     }
+
+        //     clearCanvas();
+
+        //     for (let i = 0; i < gameObjects.length; i++) {
+        //         gameObjects[i].draw();
+        //     }
+
+        //     window.requestAnimationFrame(gameLoop);
+        // }
+
+        function rectIntersect(x1, y1, w1, h1, x2, y2, w2, h2) {
+            if (x2 > w1 + x1 || x1 > w2 + x2 || y2 > h1 + y1 || y1 > h2 + y2) {
+                return false;
+            }
+            return true;
+        }
+
+        function detectCollisions() {
+            let obj1;
+            let obj2;
+
+            for (let i = 0; i < gameObjects.length; i++) {
+                gameObjects[i].isColliding = false;
+            }
+
+            for (let i = 0; i < gameObjects.length; i++) {
+                obj1 = gameObjects[i];
+                for (let j = i + 1; j < gameObjects.length; j++) {
+                    obj2 = gameObjects[j];
+
+                    if (
+                        rectIntersect(
+                            obj1.x,
+                            obj1.y,
+                            obj1.width,
+                            obj1.height,
+                            obj2.x,
+                            obj2.y,
+                            obj2.width,
+                            obj2.height
+                        )
+                    ) {
+                        obj1.isColliding = true;
+                        obj2.isColliding = true;
+                    }
+                }
+            }
+        }
+
+        // Circle
+        class Circle extends GameObject {
+            constructor(context, x, y, vx, vy) {
+                super(context, x, y, vx, vy);
+                this.r = 20;
+                this.isColliding = false;
+            }
+
+            draw() {
+                this.context.beginPath();
+                this.context.fillStyle = this.isColliding
+                    ? "#ff8080"
+                    : "#0099b0";
+                this.context.arc(this.x, this.y, this.r, 0, 2 * Math.PI);
+                this.context.fill();
+            }
+
+            update(secondsPassed) {
+                this.x = this.x + this.vx * secondsPassed;
+                this.y = this.y + this.vy * secondsPassed;
+            }
+        }
+
+        let listObjectCircle;
+
+        function createCircle() {
+            listObjectCircle = [
+                new Circle(context, 250, 50, 0, 50),
+                new Circle(context, 250, 300, 0, -50),
+                new Circle(context, 150, 0, 50, 50),
+                new Circle(context, 250, 150, 50, 50),
+                new Circle(context, 350, 75, -50, 50),
+                new Circle(context, 300, 300, 50, -50),
+            ];
+
+            console.log(listObjectCircle);
+        }
+
+        function gameLoop(timeStamp) {
+            circleIntersect();
+            secondsPassed = (timeStamp - oldTimeStamp) / 1000;
+            oldTimeStamp = timeStamp;
+
+            for (let i = 0; i < listObjectCircle.length; i++) {
+                listObjectCircle[i].update(secondsPassed);
+            }
+
+            clearCanvas();
+
+            for (let i = 0; i < listObjectCircle.length; i++) {
+                listObjectCircle[i].draw();
+            }
+
+            window.requestAnimationFrame(gameLoop);
+        }
+
+        function circleIntersect() {
+            for (let i = 0; i < listObjectCircle.length; ++i) {
+                listObjectCircle[i].isColliding = false;
+            }
+
+            for (let i = 0; i < listObjectCircle.length; ++i) {
+                for (let j = i + 1; j < listObjectCircle.length; ++j) {
+                    
+                    let obj1 = listObjectCircle[i];
+                    let obj2 = listObjectCircle[j];
+                    let vCollision = {
+                        x: obj2.x - obj1.x,
+                        y: obj2.y - obj1.y,
+                    };
+                    let distance = Math.sqrt(
+                        (obj2.x - obj1.x) * (obj2.x - obj1.x) +
+                            (obj2.y - obj1.y) * (obj2.y - obj1.y)
+                    );
+                    let vCollisionNorm = {
+                        x: vCollision.x / distance,
+                        y: vCollision.y / distance,
+                    };
+                    let vRelativeVelocity = {
+                        x: obj1.vx - obj2.vx,
+                        y: obj1.vy - obj2.vy,
+                    };
+                    let speed =
+                        vRelativeVelocity.x * vCollisionNorm.x +
+                        vRelativeVelocity.y * vCollisionNorm.y;
+
+                    console.log(speed);
+
+                    // if (speed < 0) {
+                    //     break;
+                    // }
+
+                    if(distance < obj1.r + obj2.r) {
+                        obj1.vx -= speed * vCollisionNorm.x;
+                        obj1.vy -= speed * vCollisionNorm.y;
+                        obj2.vx += speed * vCollisionNorm.x;
+                        obj2.vy += speed * vCollisionNorm.y;
+                        obj1.isColliding = true;
+                        obj2.isColliding = true;
+                    }
+                }
+            }
+        }
+
+        function checkCircleIntersect(circle1, circle2) {
+            if (
+                Math.sqrt(
+                    (circle2.x - circle1.x) * (circle2.x - circle1.x) +
+                        (circle2.y - circle1.y) * (circle2.y - circle1.y)
+                ) <
+                circle1.r + circle2.r
+            ) {
+                return true;
+            }
+            return false;
+        }
+    </script>
+</html>

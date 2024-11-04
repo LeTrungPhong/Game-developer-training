@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+    </head>
+    <body></body>
+    <script>
+
+        // Example
+        class Team {
+            constructor(name, wins = 0, losses = 0) {
+                this.name = name;
+                this.w = wins;
+                this.l = losses;
+            }
+
+            winPercentage() {
+                // return this.w / (this.w + this.l);
+                // Change 1.
+                return 0.5;
+            }
+
+            gamesAhead(that) {
+                return (this.w - this.l - that.w + that.l) / 2;
+            }
+
+            static playGame(winner, loser) {
+                winner.w++;
+                loser.l++;
+            }
+        }
+
+        const cal = new Team("California", 4, 3);
+        const uw = new Team("Washington", 6, 2);
+        const ucLa = new Team("UCLA", 2, 6);
+        const lsju = new Team("Leland Stanford Jr. University", 5, 3);
+        const wsu = new Team("California", 7, 1);
+        const ua = new Team("California", 4, 5);
+        const asu = new Team("California", 4, 4);
+        const col = new Team("Colorado", 5, 3);
+        const uo = new Team("Oregon", 5, 3);
+        const osu = new Team("Oregon State", 2, 6);
+        const usc = new Team("Southern California", 4, 4);
+        const utah = new Team("Utah", 6, 2);
+
+        console.log(Team.playGame(cal, uw));
+        console.log(cal);
+        console.log(uw);
+        console.log(cal.gamesAhead(ucLa));
+
+        // Exercises
+
+        // 2.
+        class Car {
+            constructor(year, make, model, miles) {
+                this.year = year;
+                this.make = make;
+                this.model = model;
+                this.miles = miles;
+            }
+
+            drive(distance) {
+                this.miles = this.miles + distance;
+            }
+        }
+
+        // 3.4.
+        class TeamEx {
+            constructor(name, pf, pa, ranking) {
+                this.name = name;
+                this.pg = 0;
+                this.pa = 0;
+                this.ranking = 0;
+            }
+
+            static play(team1, team2, pointsW, pointsL) {
+                team1.pa += pointsW;
+                team1.pf += pointsL;
+                team2.pa += pointsL;
+                team2.pf += pointsW;
+            }
+
+            winPercentage() {
+                return this.pa / this.pf;
+            }
+
+            setRanking(ranking) {
+                this.ranking = ranking;
+            }
+
+            static rank(listTeam) {
+                for(let i = 0; i < listTeam.length; ++i) {
+                    for(let j = i + 1; j < listTeam.length; ++j) {
+                        if(listTeam[i].winPercentage > listTeam[j].winPercentage) {
+                            let temp = listTeam[i];
+                            listTeam[i] = listTeam[j];
+                            listTeam[j] = temp;
+                        }
+                    }
+                }
+
+                for(let i = 0; i < listTeam.length; ++i) {
+                    listTeam[i].ranking = listTeam.length - i;
+                }
+            }
+
+            static toStringRanking(listTeam) {
+                for(let i = 0; i < listTeam.length; ++i) {
+                    console.log(`Name: ${listTeam[i].name}, ranking: ${listTeam[i].ranking}`);
+                }
+            }
+        }
+
+        const calEx = new TeamEx("California");
+        const uwEx = new TeamEx("Washington");
+        const ucLaEx = new TeamEx("UCLA");
+        const lsjuEx = new TeamEx("Leland Stanford Jr. University");
+        const wsuEx = new TeamEx("California");
+        const uaEx = new TeamEx("California");
+        const asuEx = new TeamEx("California");
+        const colEx = new TeamEx("Colorado");
+        const uoEx = new TeamEx("Oregon");
+        const osuEx = new TeamEx("Oregon State");
+        const uscEx = new TeamEx("Southern California");
+        const utahEx = new TeamEx("Utah");
+
+        TeamEx.play(calEx, uwEx, 10, 7);
+        TeamEx.play(uwEx, ucLaEx, 2, 3);
+        TeamEx.play(ucLaEx, lsjuEx, 3, 5);
+        TeamEx.play(lsjuEx, wsuEx, 7, 7);
+        TeamEx.play(wsuEx, uaEx, 4, 3);
+        TeamEx.play(uaEx, asuEx, 2, 9);
+        TeamEx.play(asuEx, colEx, 3, 4);
+        TeamEx.play(colEx, uoEx, 2, 8);
+        TeamEx.play(uoEx, osuEx, 5, 1);
+        TeamEx.play(osuEx, uscEx, 5, 2);
+        TeamEx.play(uscEx, utahEx, 6, 1);
+        TeamEx.play(utahEx, calEx, 10, 7);
+
+        TeamEx.rank([ calEx, uwEx, ucLaEx, lsjuEx, wsuEx, uaEx, asuEx, colEx, uoEx, osuEx, uscEx, utahEx ]);
+        TeamEx.toStringRanking([ calEx, uwEx, ucLaEx, lsjuEx, wsuEx, uaEx, asuEx, colEx, uoEx, osuEx, uscEx, utahEx ]);
+        
+    </script>
+</html>
