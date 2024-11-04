@@ -5,24 +5,36 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Document</title>
     </head>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
     <body>
-        <canvas
-            id="canvas"
-            width="750"
-            height="400"
-            style="border: 1px solid lightgrey"
-        >
+        <canvas id="canvas" style="border: 1px solid lightgrey">
             Your browser does not support the HTML5 canvas tag.
         </canvas>
     </body>
     <script>
         let canvas;
         let context;
+        const canvasWidth = 750;
+        const canvasHeight = 400;
 
         window.onload = init;
 
         function init() {
             canvas = document.getElementById("canvas");
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
             context = canvas.getContext("2d");
 
             createCircle();
@@ -140,10 +152,11 @@
 
         // Circle
         class Circle extends GameObject {
-            constructor(context, x, y, vx, vy) {
+            constructor(context, x, y, vx, vy, mass) {
                 super(context, x, y, vx, vy);
-                this.r = 20;
                 this.isColliding = false;
+                this.mass = mass;
+                this.r = mass;
             }
 
             draw() {
@@ -153,9 +166,16 @@
                     : "#0099b0";
                 this.context.arc(this.x, this.y, this.r, 0, 2 * Math.PI);
                 this.context.fill();
+
+                // this.context.beginPath();
+                // this.context.moveTo(this.x, this.y);
+                // this.context.lineTo(this.x + this.vx, this.y + this.vy);
+                // this.context.stroke();
             }
 
             update(secondsPassed) {
+                // const g = 9.81;
+                // this.vy += g * secondsPassed;
                 this.x = this.x + this.vx * secondsPassed;
                 this.y = this.y + this.vy * secondsPassed;
             }
@@ -165,12 +185,12 @@
 
         function createCircle() {
             listObjectCircle = [
-                new Circle(context, 250, 50, 0, 50),
-                new Circle(context, 250, 300, 0, -50),
-                new Circle(context, 150, 0, 50, 50),
-                new Circle(context, 250, 150, 50, 50),
-                new Circle(context, 350, 75, -50, 50),
-                new Circle(context, 300, 300, 50, -50),
+                new Circle(context, 250, 50, 0, 50, 25),
+                new Circle(context, 250, 300, 0, -50, 20),
+                new Circle(context, 150, 0, 50, 50, 15),
+                new Circle(context, 250, 150, 50, 50, 17),
+                new Circle(context, 350, 75, -50, 50, 10),
+                new Circle(context, 300, 300, 50, -50, 30),
             ];
 
             console.log(listObjectCircle);
@@ -178,6 +198,7 @@
 
         function gameLoop(timeStamp) {
             circleIntersect();
+            detectEdgeCollisions();
             secondsPassed = (timeStamp - oldTimeStamp) / 1000;
             oldTimeStamp = timeStamp;
 
@@ -201,7 +222,6 @@
 
             for (let i = 0; i < listObjectCircle.length; ++i) {
                 for (let j = i + 1; j < listObjectCircle.length; ++j) {
-                    
                     let obj1 = listObjectCircle[i];
                     let obj2 = listObjectCircle[j];
                     let vCollision = {
@@ -230,11 +250,12 @@
                     //     break;
                     // }
 
-                    if(distance < obj1.r + obj2.r) {
-                        obj1.vx -= speed * vCollisionNorm.x;
-                        obj1.vy -= speed * vCollisionNorm.y;
-                        obj2.vx += speed * vCollisionNorm.x;
-                        obj2.vy += speed * vCollisionNorm.y;
+                    if (distance < obj1.r + obj2.r) {
+                        let impulse = (2 * speed) / (obj1.mass + obj2.mass);
+                        obj1.vx -= impulse * obj2.mass * vCollisionNorm.x;
+                        obj1.vy -= impulse * obj2.mass * vCollisionNorm.y;
+                        obj2.vx += impulse * obj1.mass * vCollisionNorm.x;
+                        obj2.vy += impulse * obj1.mass * vCollisionNorm.y;
                         obj1.isColliding = true;
                         obj2.isColliding = true;
                     }
@@ -242,17 +263,43 @@
             }
         }
 
-        function checkCircleIntersect(circle1, circle2) {
-            if (
-                Math.sqrt(
-                    (circle2.x - circle1.x) * (circle2.x - circle1.x) +
-                        (circle2.y - circle1.y) * (circle2.y - circle1.y)
-                ) <
-                circle1.r + circle2.r
-            ) {
-                return true;
+        let restitution = 0.9;
+
+        function detectEdgeCollisions() {
+            let obj;
+            for (let i = 0; i < listObjectCircle.length; i++) {
+                obj = listObjectCircle[i];
+
+                // Check for left and right
+                if (obj.x < obj.r) {
+                    obj.vx = Math.abs(obj.vx) * restitution;
+                    obj.x = obj.r;
+                } else if (obj.x > canvasWidth - obj.r) {
+                    obj.vx = -Math.abs(obj.vx) * restitution;
+                    obj.x = canvasWidth - obj.r;
+                }
+
+                // Check for bottom and top
+                if (obj.y < obj.r) {
+                    obj.vy = Math.abs(obj.vy) * restitution;
+                    obj.y = obj.r;
+                } else if (obj.y > canvasHeight - obj.r) {
+                    obj.vy = -Math.abs(obj.vy) * restitution;
+                    obj.y = canvasHeight - obj.r;
+                }
             }
-            return false;
         }
+
+
+        // AABB 
+        // A.minX < B.maxX && A.maxX > B.minX
+        // A.minY < B.maxY && A.maxY > B.minY
+
+        // Brute Force
+        // Bins / Spatial Partioning / Simple Spatial Grid
+        // Simple Spatial Grid
+
+        // Separating Axis Theorem (SAT)
+        // Gilbert-Johnson-Keerthi (GJK)
     </script>
 </html>
