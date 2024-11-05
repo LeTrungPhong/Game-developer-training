@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        body {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" style="border: 1px solid grey;">
+        my canvas
+    </canvas>
+    <img id="my-image" style="display: none;" src="/Practice/img/sprite_animation.png" alt="">
+</body>
+<script>
+    let canvasWidth = 1000;
+    let canvasHeight = 500;
+    let canvas;
+    let context;
+    let spriteImage;
+
+    window.addEventListener("DOMContentLoaded", () => {
+        canvas = document.getElementById("canvas");
+        context = canvas.getContext("2d");
+        spriteImage = document.getElementById("my-image");
+
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+
+        CreateSprite();
+
+        window.requestAnimationFrame(gameLoop);
+    })
+
+    class GameObject {
+        constructor(x, y, vx, vy) {
+            this.x = x;
+            this.y = y;
+            this.vx = vx;
+            this.vy = vy;
+        }
+    }
+
+    class Sprite extends GameObject{
+        constructor(image, x, y, vx, vy, scale, indexColumn, indexRow, check) {
+            super(x, y, vx, vy);
+            this.image = image;
+            this.indexColumn = 0;
+            this.indexRow = 0;
+            this.check = true;
+            this.scale = scale;
+            this.widthImage = image.width;
+            this.heightImage = image.height;
+            this.radius = 27 * scale;
+            this.mass = this.radius;
+            this.xCollision = this.x + (this.widthImage / 5) / 2;
+            this.yCollision = this.y + (this.heightImage / 2) / 2;
+            this.angle = 0;
+        }
+
+        draw() {
+            let widthItem = this.widthImage / 5;
+            let heightItem = this.heightImage / 2;
+            let localeItemX = widthItem * this.indexColumn;
+            let localeItemY = heightItem * this.indexRow;
+
+            context.translate(this.xCollision, this.yCollision);
+            context.rotate(Math.PI / 180 * (this.angle + 90));
+            context.translate(-this.xCollision, -this.yCollision);
+
+            context.drawImage(this.image, localeItemX, localeItemY, widthItem, heightItem, this.x, this.y, widthItem * this.scale, heightItem * this.scale);
+        
+            context.setTransform(1, 0, 0, 1, 0, 0);
+
+            context.beginPath();
+            context.strokeStyle = 'grey';
+            context.arc(this.xCollision , this.yCollision, this.radius, 0, 2 * Math.PI * this.radius);
+            context.stroke();
+        }
+
+        updateStyle() {
+            if(this.check) {
+                this.indexColumn = this.indexColumn + 1;
+            } else {
+                this.indexColumn = this.indexColumn - 1;
+            }
+
+            if(this.indexColumn > 4) {
+                if(this.indexRow == 0) {
+                    this.indexRow = 1;
+                    this.indexColumn = 0;
+                } else {
+                    this.check = false;
+                    this.indexColumn = 3;
+                }
+            }
+
+            if(this.indexColumn < 0) {
+                if(this.indexRow == 1) {
+                    this.indexColumn = 4;
+                    this.indexRow = 0;
+                } else {
+                    this.check = true;
+                    this.indexColumn = 1;
+                }
+            }
+        }
+
+        update(secondsPassed) {
+            this.x = this.x + this.vx * secondsPassed;
+            this.y = this.y + this.vy * secondsPassed;
+            this.xCollision = this.x + (this.widthImage * this.scale / 5) / 2;
+            this.yCollision = this.y + (this.heightImage * this.scale / 2) / 2;
+            let radians = Math.atan2(this.vy, this.vx);
+            this.angle = 180 * radians / Math.PI;
+        }
+    }
+
+    let listSpite;
+
+    function CreateSprite() {
+        listSpite = [
+            new Sprite(spriteImage, 400, 300, 1000, -70, 2),
+            new Sprite(spriteImage, 100, 150, -200, 100, 0.5),
+            new Sprite(spriteImage, 200, 100, -20, 100, 1.3),
+            new Sprite(spriteImage, 300, 200, -20, -10, 1.6),
+            new Sprite(spriteImage, 500, 10, -20, -100, 1),
+            new Sprite(spriteImage, 150, 300, -20, -10, 0.7),
+            new Sprite(spriteImage, 120, 400, 80, -10, 0.8),
+            new Sprite(spriteImage, 40, 200, 100, -10, 1)
+        ];
+    }
+
+    function clearCanvas() {
+        context.clearRect(0, 0, canvasWidth, canvasHeight);
+    }
+
+    let oldTimeStamp = 0;
+    let secondsPassed = 0;
+
+    function detectCollisions() {
+        for(let i = 0; i < listSpite.length; ++i) {
+            for(let j = i + 1; j < listSpite.length; ++j) {
+                let obj1 = listSpite[i];
+                let obj2 = listSpite[j];
+                let distance = Math.sqrt((obj2.xCollision - obj1.xCollision) * (obj2.xCollision - obj1.xCollision) + (obj2.yCollision - obj1.yCollision) * (obj2.yCollision - obj1.yCollision));
+                let vectorDirection = { x: obj2.xCollision - obj1.xCollision, y: obj2.yCollision - obj1.yCollision };
+                let vectorDirectionNorm = { x: vectorDirection.x / distance, y: vectorDirection.y / distance };
+                let vectorV = { x: obj1.vx - obj2.vx, y: obj1.vy - obj2.vy };
+                let speed = vectorV.x * vectorDirectionNorm.x + vectorV.y * vectorDirectionNorm.y;
+
+                if(distance < obj1.radius + obj2.radius) {
+                    let impluse = 2 * speed / (obj1.mass + obj2.mass);
+                    obj1.vx = obj1.vx - impluse * obj2.mass * vectorDirectionNorm.x;
+                    obj1.vy = obj1.vy - impluse * obj2.mass * vectorDirectionNorm.y;
+                    obj2.vx = obj2.vx + impluse * obj1.mass * vectorDirectionNorm.x;
+                    obj2.vy = obj2.vy + impluse * obj1.mass * vectorDirectionNorm.y;
+
+                    obj1.updateStyle();
+                    obj2.updateStyle();
+                }
+            }
+        }
+    }
+
+    let expend = 0.9;
+
+    function detectWall() {
+        for(let i = 0; i < listSpite.length; ++i) { 
+            let obj = listSpite[i];
+
+            if(obj.xCollision < obj.radius) {
+                obj.vx = Math.abs(obj.vx) * expend;
+            } else if(obj.xCollision > canvasWidth - obj.radius) {
+                obj.vx = -Math.abs(obj.vx) * expend;
+            }
+
+            if(obj.yCollision < obj.radius) {
+                obj.vy = Math.abs(obj.vy) * expend;
+            } else if(obj.yCollision > canvasHeight - obj.radius) {
+                obj.vy = -Math.abs(obj.vy) * expend;
+            }
+        }
+    }
+
+    function gameLoop(timeStamp) {
+        secondsPassed = (timeStamp - oldTimeStamp) / 1000;
+        oldTimeStamp = timeStamp;
+        let fps = 1 / secondsPassed;
+
+        // console.log("fps: " + fps);
+
+        clearCanvas();
+        detectCollisions();
+        detectWall();
+
+        for(let i = 0; i < listSpite.length; ++i) {
+            listSpite[i].draw();
+
+            listSpite[i].update(secondsPassed);
+        }
+
+
+        window.requestAnimationFrame(gameLoop);
+    }
+
+</script>
+</html>
