@@ -99,28 +99,69 @@
         let locale01 = { x: cellWidth * indexColumn, y: cellHeight * (indexRow + 1) };
         let locale11 = { x: cellWidth * (indexColumn + 1), y: cellHeight * (indexRow + 1) };
 
+        let check00 = false;
+        let check01 = false;
+        let check10 = false;
+        let check11 = false;
+
         if(Math.sqrt((locale00.x - obj.x) * (locale00.x - obj.x) + (locale00.y - obj.y) * (locale00.y - obj.y)) < obj.radius) {
-            grid[indexRow - 1][indexColumn - 1].push(obj);
-            grid[indexRow][indexColumn - 1].push(obj);
-            grid[indexRow - 1][indexColumn].push(obj);
+            indexRow - 1 >= 0 && indexColumn - 1 >=0 ? grid[indexRow - 1][indexColumn - 1].push(obj) : true;
+            indexColumn - 1 >=0 ? grid[indexRow][indexColumn - 1].push(obj) : true;
+            indexRow - 1 >= 0 ? grid[indexRow - 1][indexColumn].push(obj) : true;
+            check00 = true;
         }
 
         if(Math.sqrt((locale01.x - obj.x) * (locale01.x - obj.x) + (locale01.y - obj.y) * (locale01.y - obj.y)) < obj.radius) {
-            grid[indexRow][indexColumn - 1].push(obj);
-            grid[indexRow + 1][indexColumn - 1].push(obj);
-            grid[indexRow + 1][indexColumn].push(obj);
+            indexColumn - 1 >=0 ? grid[indexRow][indexColumn - 1].push(obj) : true;
+            indexRow + 1 <= sizeRow - 1 && indexColumn - 1 >=0 ? grid[indexRow + 1][indexColumn - 1].push(obj) : true;
+            indexRow + 1 <= sizeRow - 1 ? grid[indexRow + 1][indexColumn].push(obj) : true;
+            check01 = true;
         }
 
         if(Math.sqrt((locale10.x - obj.x) * (locale10.x - obj.x) + (locale10.y - obj.y) * (locale10.y - obj.y)) < obj.radius) {
-            grid[indexRow - 1][indexColumn].push(obj);
-            grid[indexRow - 1][indexColumn + 1].push(obj);
-            grid[indexRow][indexColumn + 1].push(obj);
+            indexRow - 1 >= 0 ? grid[indexRow - 1][indexColumn].push(obj) : true;
+            indexRow - 1 >= 0 && indexColumn + 1 <= sizeColumn - 1 ? grid[indexRow - 1][indexColumn + 1].push(obj) : true;
+            indexColumn + 1 <= sizeColumn - 1 ? grid[indexRow][indexColumn + 1].push(obj) : true;
+            check10 = true;
         }
 
         if(Math.sqrt((locale11.x - obj.x) * (locale11.x - obj.x) + (locale11.y - obj.y) * (locale11.y - obj.y)) < obj.radius) {
-            grid[indexRow][indexColumn + 1].push(obj);
-            grid[indexRow + 1][indexColumn].push(obj);
-            grid[indexRow + 1][indexColumn + 1].push(obj);
+            indexColumn + 1 <= sizeColumn - 1 ? grid[indexRow][indexColumn + 1].push(obj) : true;
+            indexRow + 1 <= sizeRow - 1 ? grid[indexRow + 1][indexColumn].push(obj) : true;
+            indexRow + 1 <= sizeRow - 1 && indexColumn + 1 <= sizeColumn - 1 ? grid[indexRow + 1][indexColumn + 1].push(obj) : true;
+            check11 = true;
+        }
+
+        if(!check00 && !check10) {
+            // y = 0
+
+            if(obj.y - locale00.y < obj.radius) {
+                indexRow - 1 >= 0 ? grid[indexRow - 1][indexColumn].push(obj) : true;
+            }
+        }
+
+        if(!check01 && !check00) {
+            // x = 0
+
+            if(obj.x - locale00.x < obj.radius) {
+                indexColumn - 1 >= 0 ? grid[indexRow][indexColumn - 1].push(obj) : true;
+            }
+        }
+
+        if(!check10 && !check11) {
+            // x = 1
+
+            if(obj.x > locale11.x - obj.radius) {
+                indexColumn + 1 <= sizeColumn - 1 ? grid[indexRow][indexColumn + 1].push(obj) : true;
+            }
+        }
+
+        if(!check01 && !check11) {
+            // y = 1
+
+            if(obj.y > locale11.y - obj.radius) {
+                indexRow + 1 <= sizeRow - 1 ? grid[indexRow + 1][indexColumn].push(obj) : true;
+            }
         }
 
         grid[indexRow][indexColumn].push(obj);
@@ -132,15 +173,66 @@
             const indexColumn = Math.floor(obj.x / cellWidth);
             const indexRow = Math.floor(obj.y / cellHeight);
 
-            console.log(`x: ${obj.x}, y: ${obj.y}`);
-            console.log(`indexR: ${indexRow}, indexC: ${indexColumn}`)
+            // console.log(`x: ${obj.x}, y: ${obj.y}`);
+            // console.log(`indexR: ${indexRow}, indexC: ${indexColumn}`)
 
             widePhase(obj, indexRow, indexColumn);
         }
     }
 
+    function detectCollisions() {
+
+        let temp = [];
+
+        for(let i = 0; i < grid.length; ++i) {
+            for(let j = 0; j < grid[i].length; ++j) {
+                if(grid[i][j].length > 1) {
+
+                    let listCollision = grid[i][j];
+
+                    for(let k = 0; k < listCollision.length; ++k) {
+                        for(let t = k + 1; t < listCollision.length; ++t) {
+
+                            let obj1 = listCollision[k];
+                            let obj2 = listCollision[t];
+
+                            let checkRepeat = false;
+                            for(let h = 0; h < temp.length; ++h) {
+                                if((temp[h].obj1 == obj1 && temp[h].obj2 == obj2) || (temp[h].obj1 == obj2 && temp[h].obj2 == obj1)) {
+                                    checkRepeat = true;
+                                }
+                            }
+
+                            if(checkRepeat) {
+                                continue;
+                            }
+
+                            let distance = Math.sqrt((obj2.x - obj1.x) * (obj2.x - obj1.x) + (obj2.y - obj1.y) * (obj2.y - obj1.y));
+                            let vectorDirection = { x: obj2.x - obj1.x, y: obj2.y - obj1.y };
+                            let vectorDirectionNorm = { x: vectorDirection.x / distance, y: vectorDirection.y / distance };
+                            let vectorV = { x: obj1.vx - obj2.vx, y: obj1.vy - obj2.vy };
+                            let speed = vectorV.x * vectorDirectionNorm.x + vectorV.y * vectorDirectionNorm.y;
+
+                            if(distance < obj1.radius + obj2.radius) {
+                                let impluse = (2 * speed) / (obj1.mass + obj2.mass);
+                                obj1.vx = obj1.vx - impluse * obj2.mass * vectorDirectionNorm.x;
+                                obj1.vy = obj1.vy - impluse * obj2.mass * vectorDirectionNorm.y;
+                                obj2.vx = obj2.vx + impluse * obj1.mass * vectorDirectionNorm.x;
+                                obj2.vy = obj2.vy + impluse * obj1.mass * vectorDirectionNorm.y;
+
+                                temp.push({ obj1, obj2 });
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
     function detectWall() {
         let i = 0;
+        let expent = 0.9;
         for(let j = 0; j < grid[i].length; ++j) {
             const count = grid[i][j].length;
             if(count != 0) {
@@ -148,7 +240,7 @@
                     let object = grid[i][j][k];
                     
                     if(object.y < object.radius) {
-                        object.vy = Math.abs(object.vy);
+                        object.vy = Math.abs(object.vy) * expent;
                     }
                 }
             }
@@ -162,7 +254,7 @@
                     let object = grid[i][j][k];
                     
                     if(object.y > canvasHeight - object.radius) {
-                        object.vy = -Math.abs(object.vy);
+                        object.vy = -Math.abs(object.vy) * expent;
                     }
                 }
             }
@@ -176,7 +268,7 @@
                     let object = grid[i][j][k];
                     
                     if(object.x < object.radius) {
-                        object.vx = Math.abs(object.vx);
+                        object.vx = Math.abs(object.vx) * expent;
                     }
                 }
             }
@@ -190,7 +282,7 @@
                     let object = grid[i][j][k];
                     
                     if(object.x > canvasWidth - object.radius) {
-                        object.vx = -Math.abs(object.vx);
+                        object.vx = -Math.abs(object.vx) * expent;
                     }
                 }
             }
@@ -210,6 +302,7 @@
         constructor(x, y, vx, vy, r) {
             super(x, y, vx, vy);
             this.radius = r;
+            this.mass = this.radius;
         }
 
         draw() {
@@ -231,8 +324,10 @@
 
     function CreateListCircle() {
         listObject = [
-            new Circle(100, 100, 20, 50, 30),
-            new Circle(300, 300, -60, -50, 20)
+            new Circle(100, 100, 300, 600, 20),
+            new Circle(300, 300, -350, -600, 30),
+            new Circle(200, 300, -250, -500, 30),
+            new Circle(400, 400, -150, -400, 30)
         ];
     }
 
@@ -254,13 +349,12 @@
         clearCanvas();
         drawGrid();
         detectWall();
+        detectCollisions();
 
         for(let i = 0; i < listObject.length; ++i) {
             listObject[i].draw();
             listObject[i].update(secondsPassed);
         }
-
-        
 
         window.requestAnimationFrame(gameLoop);
     }
