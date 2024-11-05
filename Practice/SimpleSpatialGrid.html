@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+    }
+    body {
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+<body>
+    <canvas style="border: 1px solid grey;" id="canvas"></canvas>
+</body>
+<script>
+    let canvas;
+    let context;
+    let grid;
+    let canvasWidth;
+    let canvasHeight;
+    let cellWidth;
+    let cellHeight;
+
+    let sizeRow = 10;
+    let sizeColumn = 10;
+
+    function createSizeCanvas() {
+        const width = window.screen.width * 1 / 3;
+        const heigth = window.screen.height * 2 / 3;
+
+        canvasWidth = Math.floor(width / sizeRow) * sizeRow;
+        canvasHeight = Math.floor(heigth / sizeColumn) * sizeColumn;
+
+        // console.log(canvasWidth + " " + canvasHeight);
+
+        cellWidth = Math.round(canvasWidth / sizeColumn);
+        cellHeight = Math.round(canvasHeight / sizeRow);
+
+        // console.log(cellWidth + " " + cellHeight);
+    }
+
+    window.addEventListener("DOMContentLoaded",() => {
+        canvas = document.getElementById("canvas");
+
+        createSizeCanvas();
+
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+        grid = Array.from({ length: sizeRow }, () => 
+            Array.from({ length: sizeColumn }, () => [])
+        );
+
+        context = canvas.getContext("2d");
+
+        CreateListCircle();
+
+        
+        window.requestAnimationFrame(gameLoop);
+    });
+
+    let listObject;
+
+    function drawGrid() {
+        for(let i = 0; i < grid.length; ++i) {
+            for(let j = 0; j < grid[i].length; ++j) {
+                const count = grid[i][j].length;
+                const rgb = 255 - count * 20;
+                context.beginPath();
+                context.fillStyle = `rgb(${rgb}, ${rgb}, ${rgb})`;
+                context.strokeStyle = 'gray';
+                context.fillRect(cellWidth * j, cellHeight * i, cellWidth, cellHeight);
+                context.fill();
+                context.strokeRect(cellWidth * j, cellHeight * i, cellWidth, cellHeight);
+            }
+        }
+    }
+
+    function resetGrid() {
+        for(let i = 0; i < grid.length; ++i) {
+            for(let j = 0; j < grid[i].length; ++j) {
+                grid[i][j] = [];
+            }
+        }
+    }
+
+    function widePhase(obj, indexRow, indexColumn) {
+
+        let locale00 = { x: cellWidth * indexColumn, y: cellHeight * indexRow };
+        let locale10 = { x: cellWidth * (indexColumn + 1), y: cellHeight * indexRow };
+        let locale01 = { x: cellWidth * indexColumn, y: cellHeight * (indexRow + 1) };
+        let locale11 = { x: cellWidth * (indexColumn + 1), y: cellHeight * (indexRow + 1) };
+
+        if(Math.sqrt((locale00.x - obj.x) * (locale00.x - obj.x) + (locale00.y - obj.y) * (locale00.y - obj.y)) < obj.radius) {
+            grid[indexRow - 1][indexColumn - 1].push(obj);
+            grid[indexRow][indexColumn - 1].push(obj);
+            grid[indexRow - 1][indexColumn].push(obj);
+        }
+
+        if(Math.sqrt((locale01.x - obj.x) * (locale01.x - obj.x) + (locale01.y - obj.y) * (locale01.y - obj.y)) < obj.radius) {
+            grid[indexRow][indexColumn - 1].push(obj);
+            grid[indexRow + 1][indexColumn - 1].push(obj);
+            grid[indexRow + 1][indexColumn].push(obj);
+        }
+
+        if(Math.sqrt((locale10.x - obj.x) * (locale10.x - obj.x) + (locale10.y - obj.y) * (locale10.y - obj.y)) < obj.radius) {
+            grid[indexRow - 1][indexColumn].push(obj);
+            grid[indexRow - 1][indexColumn + 1].push(obj);
+            grid[indexRow][indexColumn + 1].push(obj);
+        }
+
+        if(Math.sqrt((locale11.x - obj.x) * (locale11.x - obj.x) + (locale11.y - obj.y) * (locale11.y - obj.y)) < obj.radius) {
+            grid[indexRow][indexColumn + 1].push(obj);
+            grid[indexRow + 1][indexColumn].push(obj);
+            grid[indexRow + 1][indexColumn + 1].push(obj);
+        }
+
+        grid[indexRow][indexColumn].push(obj);
+    }
+
+    function updateGrid() {
+        for(let i = 0; i < listObject.length; ++i) {
+            let obj = listObject[i];
+            const indexColumn = Math.floor(obj.x / cellWidth);
+            const indexRow = Math.floor(obj.y / cellHeight);
+
+            console.log(`x: ${obj.x}, y: ${obj.y}`);
+            console.log(`indexR: ${indexRow}, indexC: ${indexColumn}`)
+
+            widePhase(obj, indexRow, indexColumn);
+        }
+    }
+
+    function detectWall() {
+        let i = 0;
+        for(let j = 0; j < grid[i].length; ++j) {
+            const count = grid[i][j].length;
+            if(count != 0) {
+                for(let k = 0; k < grid[i][j].length; ++k) {
+                    let object = grid[i][j][k];
+                    
+                    if(object.y < object.radius) {
+                        object.vy = Math.abs(object.vy);
+                    }
+                }
+            }
+        }
+
+        i = grid.length - 1;
+        for(let j = 0; j < grid[i].length; ++j) {
+            const count = grid[i][j].length;
+            if(count != 0) {
+                for(let k = 0; k < grid[i][j].length; ++k) {
+                    let object = grid[i][j][k];
+                    
+                    if(object.y > canvasHeight - object.radius) {
+                        object.vy = -Math.abs(object.vy);
+                    }
+                }
+            }
+        }
+
+        let j = 0;
+        for(let i = 0; i < grid.length; ++i) {
+            const count = grid[i][j].length;
+            if(count != 0) {
+                for(let k = 0; k < grid[i][j].length; ++k) {
+                    let object = grid[i][j][k];
+                    
+                    if(object.x < object.radius) {
+                        object.vx = Math.abs(object.vx);
+                    }
+                }
+            }
+        }
+
+        j = grid[i].length - 1;
+        for(let i = 0; i < grid.length; ++i) {
+            const count = grid[i][j].length;
+            if(count != 0) {
+                for(let k = 0; k < grid[i][j].length; ++k) {
+                    let object = grid[i][j][k];
+                    
+                    if(object.x > canvasWidth - object.radius) {
+                        object.vx = -Math.abs(object.vx);
+                    }
+                }
+            }
+        }
+    }
+
+    class GameObject {
+        constructor(x, y, vx, vy) {
+            this.x = x;
+            this.y = y;
+            this.vx = vx;
+            this.vy = vy;
+        }
+    }
+
+    class Circle extends GameObject {
+        constructor(x, y, vx, vy, r) {
+            super(x, y, vx, vy);
+            this.radius = r;
+        }
+
+        draw() {
+            context.beginPath();
+            context.fillStyle = '#5cab65';
+            context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+            context.fill();
+        }
+
+        update(secondsPassed) {
+            this.x = this.x + this.vx * secondsPassed;
+            this.y = this.y + this.vy * secondsPassed;
+        }
+
+        simpleSpatialGrid() {
+
+        }
+    }
+
+    function CreateListCircle() {
+        listObject = [
+            new Circle(100, 100, 20, 50, 30),
+            new Circle(300, 300, -60, -50, 20)
+        ];
+    }
+
+    function clearCanvas() {
+        context.clearRect(0, 0, canvasWidth, canvasHeight);
+    }
+
+    
+
+    let secondsPassed = 0;
+    let oldTimeStamp = 0;
+    function gameLoop(timeStamp) {
+
+        secondsPassed = (timeStamp - oldTimeStamp) / 1000;
+        oldTimeStamp = timeStamp;
+
+        resetGrid();
+        updateGrid();
+        clearCanvas();
+        drawGrid();
+        detectWall();
+
+        for(let i = 0; i < listObject.length; ++i) {
+            listObject[i].draw();
+            listObject[i].update(secondsPassed);
+        }
+
+        
+
+        window.requestAnimationFrame(gameLoop);
+    }
+</script>
+</html>
