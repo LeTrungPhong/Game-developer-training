@@ -22,14 +22,20 @@
         canvas.width = canvasWidth;
         canvas.height = canvasHeight;
 
-        // Run Practice 2
-        // createListCircle();
-        // window.requestAnimationFrame(gameLoop);
-
-        // Run Practice 3
+        createListCircle();
         createCircleP3();
-        window.requestAnimationFrame(gameLoopPractice3);
+
+        runPractice2();
+        // runPractice3();
     });
+
+    function runPractice2() {
+        window.requestAnimationFrame(gameLoop);
+    }
+
+    function runPractice3() {
+        window.requestAnimationFrame(gameLoopPractice3);
+    }
 
 
     // Practice 1
@@ -112,6 +118,8 @@
             listCircle[i].draw();
         }
 
+        drawText();
+
         window.requestAnimationFrame(gameLoop);
     }
 
@@ -152,6 +160,15 @@
         }   
     }
 
+    function drawText() {
+        context.beginPath();
+        context.font = "24px Arial";
+        context.textAlign = "center";
+        context.textBaseLine = "center";
+        context.fillStyle = "gray";
+        context.fillText("Cancle comment line 29 and comment line 28 to run Practice 3", canvasWidth / 2, 80);
+    }
+
     let circleRemote;
 
     function createCircleP3() {
@@ -167,6 +184,7 @@
         circleRemote.update(secondsPassed);
         circleRemote.detectWall();
         circleRemote.draw();
+        drawText();
 
         window.requestAnimationFrame(gameLoopPractice3);
     }

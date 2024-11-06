@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    * {
+        padding: 0;
+        margin: 0;
+    }
+
+    body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100vh;
+        height: 100vw;
+    }
+</style>
+<body>
+    <canvas style="border: 1px solid gray;" id="canvas"></canvas>
+</body>
+<script>
+    let canvas;
+    let context;
+    const canvasWidth = window.screen.width * 1 / 3;
+    const canvasHeight = window.screen.height * 2 / 3;
+    let expend = 0.9;
+
+    window.addEventListener("DOMContentLoaded", () => {
+        canvas = document.getElementById("canvas");
+        context = canvas.getContext("2d");
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+        createObject();
+
+        window.requestAnimationFrame(gameLoop);
+    });
+
+    class Vector {
+        static sub(v1, v2) {
+            return { x: v1.x - v2.x, y: v1.y - v2.y };
+        }
+
+        static normalize(v, number) {
+            return { x: v.x / number, y: v.y / number };
+        }
+
+        static mul(v1, v2) {
+            return v1.x * v2.x + v1.y * v2.y;
+        }
+
+        static distance(v1, v2) {
+            return Math.sqrt((v1.x - v2.x) * (v1.x - v2.x) + (v1.y - v2.y) * (v1.y - v2.y));
+        }
+    }
+
+    class GameObject {
+        constructor(x, y, vx, vy) {
+            this.x = x;
+            this.y = y;
+            this.vx = vx;
+            this.vy = vy;
+            this.isCollosion = false;
+        }
+    }
+
+    class Circle extends GameObject {
+        constructor(x, y, vx, vy, radius) {
+            super(x, y, vx, vy);
+            this.radius = radius;
+            this.mass = this.radius * this.radius;
+        }
+
+        draw() {
+            context.beginPath();
+            context.fillStyle = this.isCollosion ? 'red' : 'gray';
+            context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+            context.fill();
+            this.isCollosion = false;
+        }
+
+        update(secondsPassed) {
+            this.x = this.x + this.vx * secondsPassed;
+            this.y = this.y + this.vy * secondsPassed;
+        }
+
+        static detectWall(obj) {
+            if(obj.x < obj.radius) {
+                obj.x = obj.radius;
+                obj.vx = Math.abs(obj.vx) * expend;
+            }
+            if(obj.x > canvasWidth - obj.radius) {
+                obj.x = canvasWidth- obj.radius;
+                obj.vx = -Math.abs(obj.vx) * expend;
+            }
+            if(obj.y < obj.radius) {
+                obj.y = obj.radius;
+                obj.vy = Math.abs(obj.vy) * expend;
+            }
+            if(obj.y > canvasHeight - obj.radius) {
+                obj.y = canvasHeight - obj.radius;
+                obj.vy = -Math.abs(obj.vy) * expend;
+            }
+        }
+
+        static detectCollision(obj1, obj2) {
+            let distance = Math.sqrt((obj2.x - obj1.x) * (obj2.x - obj1.x) + (obj2.y - obj1.y) * (obj2.y - obj1.y));
+            let vectorDirection = Vector.sub({ x: obj2.x, y: obj2.y }, { x: obj1.x, y: obj1.y });
+            let vectorDirectionNorm = Vector.normalize(vectorDirection, distance);
+            let vectorV = Vector.sub({ x: obj1.vx, y: obj1.vy }, { x: obj2.vx, y: obj2.vy });
+            let speed = Vector.mul(vectorV, vectorDirectionNorm);
+
+            if(distance <= obj1.radius + obj2.radius) {
+                let overlap = (obj1.radius + obj2.radius - distance) / 2;
+                obj1.x -= overlap * vectorDirectionNorm.x;
+                obj1.y -= overlap * vectorDirectionNorm.y;
+                obj2.x += overlap * vectorDirectionNorm.x;
+                obj2.y += overlap * vectorDirectionNorm.y;
+                let impluse = (2 * speed) / (obj1.mass + obj2.mass);
+                obj1.vx -= impluse * obj2.mass * vectorDirectionNorm.x;
+                obj1.vy -= impluse * obj2.mass * vectorDirectionNorm.y;
+                obj2.vx += impluse * obj1.mass * vectorDirectionNorm.x;
+                obj2.vy += impluse * obj1.mass * vectorDirectionNorm.y;
+                obj1.isCollosion = true;
+                obj2.isCollosion = true;
+            }
+        }
+    }
+
+    class Rectangle extends GameObject {
+        constructor(x, y, vx, vy, width, height) {
+            super(x, y, vx, vy);
+            this.width = width;
+            this.height = height;
+            this.mass = this.width * this.height;
+        }
+
+        draw() {
+            context.beginPath();
+            context.fillStyle = this.isCollosion ? 'red' : 'gray';
+            context.fillRect(this.x, this.y, this.width, this.height);
+            context.fill();
+            this.isCollosion = false;
+        }
+
+        update(secondsPassed) {
+            this.x = this.x + this.vx * secondsPassed;
+            this.y = this.y + this.vy * secondsPassed;
+        }
+
+        static detectWall(obj) {
+            if(obj.x < 0) {
+                obj.x = 0;
+                obj.vx = Math.abs(obj.vx) * expend;
+            }
+            if(obj.x > canvasWidth - obj.width) {
+                obj.x = canvasWidth - obj.width;
+                obj.vx = -Math.abs(obj.vx) * expend;
+            }
+            if(obj.y < 0) {
+                obj.y = 0;
+                obj.vy = Math.abs(obj.vy) * expend;
+            }
+            if(obj.y > canvasHeight - obj.height) {
+                obj.y = canvasHeight - obj.height;
+                obj.vy = -Math.abs(obj.vy) * expend;
+            }
+        }
+
+        static detectCollision(obj1, obj2) {
+            let distance = Math.sqrt((obj2.x - obj1.x) * (obj2.x - obj1.x) + (obj2.y - obj1.y) * (obj2.y - obj1.y));
+            let vectorDirection = Vector.sub({ x: obj2.x, y: obj2.y }, { x: obj1.x, y: obj1.y });
+            let vectorDirectionNorm = Vector.normalize(vectorDirection, distance);
+            let vectorV = Vector.sub({ x: obj1.vx, y: obj1.vy }, { x: obj2.vx, y: obj2.vy });
+            let speed = Vector.mul(vectorV, vectorDirectionNorm);
+
+            if(obj2.x < obj1.x + obj1.width && obj1.x < obj2.x + obj2.width && obj2.y < obj1.height + obj1.y && obj1.y < obj2.height + obj2.y) {
+                let impluse = (2 * speed) / (obj1.mass + obj2.mass);
+                obj1.vx -= impluse * obj2.mass * vectorDirectionNorm.x;
+                obj1.vy -= impluse * obj2.mass * vectorDirectionNorm.y;
+                obj2.vx += impluse * obj1.mass * vectorDirectionNorm.x;
+                obj2.vy += impluse * obj1.mass * vectorDirectionNorm.y;
+                obj1.isCollosion = true;
+                obj2.isCollosion = true;
+
+                if(obj1.x < obj2.x && obj1.y < obj2.y) {
+                    let overlapX = obj1.x + obj1.width - obj2.x;
+                    let overlapY = obj1.y + obj1.height - obj2.y;
+                    if(overlapX < overlapY) {
+                        obj2.x += overlapX;
+                        obj1.x -= overlapX;
+                    } else {
+                        obj2.y += overlapY;
+                        obj1.y -= overlapY;
+                    }
+                } else if(obj1.x > obj2.x && obj1.y < obj2.y) {
+                    let overlapX = obj2.x + obj2.width - obj1.x;
+                    let overlapY = obj1.y + obj1.height - obj2.y;
+                    if(overlapX < overlapY) {
+                        obj2.x -= overlapX;
+                        obj1.x += overlapX;
+                    } else {
+                        obj2.y += overlapY;
+                        obj1.y -= overlapY;
+                    }
+                } else if(obj1.x < obj2.x && obj1.y > obj2.y) {
+                    let overlapX = obj1.x + obj1.width - obj2.x;
+                    let overlapY = obj2.y + obj2.height - obj1.y;
+                    if(overlapX < overlapY) {
+                        obj2.x += overlapX;
+                        obj1.x -= overlapX;
+                    } else {
+                        obj2.y -= overlapY;
+                        obj1.y += overlapY;
+                    }
+                } else if(obj1.x > obj2.x && obj1.y > obj2.y) {
+                    let overlapX = obj2.x + obj2.width - obj1.x;
+                    let overlapY = obj2.y + obj2.height - obj1.y;
+                    if(overlapX < overlapY) {
+                        obj2.x -= overlapX;
+                        obj1.x += overlapX;
+                    } else {
+                        obj2.y -= overlapY;
+                        obj1.y += overlapY;
+                    }
+                }
+            }
+        }
+    }
+
+    function detectCollisionOfCircleAndRectangle(rectangle, circle) {
+        let localeN = { x: 0, y: 0};
+        localeN.x = Math.max(rectangle.x, Math.min(circle.x, rectangle.x + rectangle.width));
+        localeN.y = Math.max(rectangle.y, Math.min(circle.y, rectangle.y + rectangle.height));
+
+        if(Vector.distance(localeN, circle) < circle.radius) {
+            let vectorDirection = Vector.sub(circle, localeN);
+            let distance = Vector.distance(circle, localeN);
+            let vectorDirectionNorm = Vector.normalize(vectorDirection, distance);
+            let vectorV = Vector.sub({ x: circle.vx, y: circle.vy }, { x: rectangle.vx, y: rectangle.vy });
+            let speed = Vector.mul(vectorV, vectorDirectionNorm);
+           
+            let impluse = (2 * speed) / (rectangle.mass + circle.mass);
+            circle.vx -= impluse * rectangle.mass * vectorDirectionNorm.x;
+            circle.vy -= impluse * rectangle.mass * vectorDirectionNorm.y;
+            rectangle.vx += impluse * circle.mass * vectorDirectionNorm.x;
+            rectangle.vy += impluse * circle.mass * vectorDirectionNorm.y;
+
+            let overlap = circle.radius - distance;
+            circle.x += overlap * vectorDirectionNorm.x;
+            circle.y += overlap * vectorDirectionNorm.y;
+            rectangle.x -= overlap  * vectorDirectionNorm.x;
+            rectangle.y -= overlap * vectorDirectionNorm.y;
+            rectangle.isCollosion = true;
+            circle.isCollosion = true;
+        }
+    }
+
+    let listCircle;
+    let listRetangle;
+
+    function createObject() {
+        listCircle = [
+            new Circle(100, 200, -300, -40, 20),
+            new Circle(400, 100, 60, 20, 24),
+            new Circle(300, 400, 30, -20, 20)
+        ];
+
+        listRetangle = [
+            new Rectangle(150, 350, -1000, -10, 40, 35),
+            new Rectangle(350, 250, -1000, 600, 35, 30),
+            new Rectangle(450, 500, -500, -30, 30, 40)
+        ];
+    }
+
+    function drawObject() {
+        for(let i = 0; i < listCircle.length; ++i) {
+            listCircle[i].draw();
+        }
+        for(let i = 0; i < listRetangle.length; ++i) {
+            listRetangle[i].draw();
+        }
+    }
+
+    function updateObject(secondsPassed) {
+        for(let i = 0; i < listCircle.length; ++i) {
+            listCircle[i].update(secondsPassed);
+        }
+        for(let i = 0; i < listRetangle.length; ++i) {
+            listRetangle[i].update(secondsPassed);
+        }
+    }
+
+    function clearCanvas() {
+        context.clearRect(0, 0, canvasWidth, canvasHeight);
+    }
+
+    function detectWallByForceBrute() {
+        for(let i = 0; i < listCircle.length; ++i) {
+            Circle.detectWall(listCircle[i]);
+        }
+        for(let i = 0; i < listRetangle.length; ++i) {
+            Rectangle.detectWall(listRetangle[i]);
+        }
+    }
+
+    function detectCollisionByForceBrute() {
+        for(let i = 0; i < listCircle.length; ++i) {
+            for(let j = i + 1; j < listCircle.length; ++j) {
+                let obj1 = listCircle[i];
+                let obj2 = listCircle[j];
+                Circle.detectCollision(obj1, obj2);
+            }
+        }
+
+        for(let i = 0; i < listRetangle.length; ++i) {
+            for(let j = i + 1; j < listRetangle.length; ++j) {
+                let obj1 = listRetangle[i];
+                let obj2 = listRetangle[j];
+                Rectangle.detectCollision(obj1, obj2);
+            }
+        }
+
+        for(let i = 0; i < listCircle.length; ++i) {
+            for(let j = 0; j < listRetangle.length; ++j) {
+                let obj1 = listCircle[i];
+                let obj2 = listRetangle[j];
+                detectCollisionOfCircleAndRectangle(obj2, obj1);
+            }
+        }
+    }
+
+
+    let secondsPassed = 0;
+    let oldTimeStamp = 0;
+    function gameLoop(timeStamp) {
+        secondsPassed = (timeStamp - oldTimeStamp) / 1000;
+        oldTimeStamp = timeStamp;
+        clearCanvas();
+        detectWallByForceBrute();
+        detectCollisionByForceBrute();
+        updateObject(secondsPassed);
+        drawObject();
+        window.requestAnimationFrame(gameLoop);
+    }
+    
+
+</script>
+</html>

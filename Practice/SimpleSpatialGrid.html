@@ -214,6 +214,11 @@
                             let speed = vectorV.x * vectorDirectionNorm.x + vectorV.y * vectorDirectionNorm.y;
 
                             if(distance < obj1.radius + obj2.radius) {
+                                let overlap = obj1.radius + obj2.radius - distance;
+                                obj1.x -= vectorDirectionNorm.x * (overlap / 2);
+                                obj1.y -= vectorDirectionNorm.y * (overlap / 2);
+                                obj2.x += vectorDirectionNorm.x * (overlap / 2);
+                                obj2.y += vectorDirectionNorm.y * (overlap / 2);
                                 let impluse = (2 * speed) / (obj1.mass + obj2.mass);
                                 obj1.vx = obj1.vx - impluse * obj2.mass * vectorDirectionNorm.x;
                                 obj1.vy = obj1.vy - impluse * obj2.mass * vectorDirectionNorm.y;
@@ -315,10 +320,6 @@
         update(secondsPassed) {
             this.x = this.x + this.vx * secondsPassed;
             this.y = this.y + this.vy * secondsPassed;
-        }
-
-        simpleSpatialGrid() {
-
         }
     }
 

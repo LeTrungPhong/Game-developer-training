@@ -51,10 +51,21 @@
         // Run practice1
         // window.requestAnimationFrame(gameLoop1);
 
-        // Run practice2
+        // // Run practice2
         createCircle();
-        window.requestAnimationFrame(gameLoop);
+        // window.requestAnimationFrame(gameLoop);
+
+        // runPractice1();
+        runPractice2();
     });
+
+    function runPractice1() {
+        window.requestAnimationFrame(gameLoop1);
+    }
+
+    function runPractice2() {
+        window.requestAnimationFrame(gameLoop);
+    }
 
     // Practice 1
     let ball = {
@@ -128,6 +139,22 @@
         context1.textBaseline = "bottom";
         context1.fillStyle = "black";
         context1.fillText("Space to Jump", 200, 60);
+
+        context1.font = "17px Arial";
+        context1.textAlign = "center";
+        context1.textBaseline = "bottom";
+        context1.fillStyle = "Gray";
+        context1.fillText("Cancle comment in line 59 and command line 58", canvasWidth / 2, 80);
+        context1.fillText("in source code to run Practice 2", canvasWidth / 2, 100);
+    }
+
+    function drawText2() {
+        context2.font = "17px Arial";
+        context2.textAlign = "center";
+        context2.textBaseline = "bottom";
+        context2.fillStyle = "Gray";
+        context2.fillText("Cancle comment in line 58 and command line 59", canvasWidth / 2, 80);
+        context2.fillText("in source code to run Practice 1", canvasWidth / 2, 100);
     }
 
     function gameLoop1(timeStamp) {
@@ -223,6 +250,7 @@
         for (let i = 0; i < listObjectCircle.length; i++) {
             listObjectCircle[i].draw();
         }
+        drawText2();
 
         window.requestAnimationFrame(gameLoop);
     }
@@ -263,6 +291,12 @@
                 // }
 
                 if (distance < obj1.r + obj2.r) {
+                    let overlap = obj1.r + obj2.r - distance;
+                    obj1.x -= vCollisionNorm.x * (overlap / 2);
+                    obj1.y -= vCollisionNorm.y * (overlap / 2);
+                    obj2.x += vCollisionNorm.x * (overlap / 2);
+                    obj2.y += vCollisionNorm.y * (overlap / 2);
+
                     let impulse = (2 * speed) / (obj1.mass + obj2.mass);
                     obj1.vx -= impulse * obj2.mass * vCollisionNorm.x;
                     obj1.vy -= impulse * obj2.mass * vCollisionNorm.y;
