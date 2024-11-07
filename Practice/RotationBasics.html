@@ -37,7 +37,9 @@
         createObject();
 
         // window.requestAnimationFrame(gameLoop);
-        window.requestAnimationFrame(gameLoop2);
+        // window.requestAnimationFrame(gameLoop2);
+        startEventMouseMove();
+        window.requestAnimationFrame(gameLoop3);
     });
 
     let rectangle = {
@@ -221,6 +223,56 @@
         drawOclock();
 
         window.requestAnimationFrame(gameLoop2);
+    }
+
+    // Practice 3
+
+    let rectangleP3 = {
+        x: localeCenter.x,
+        y: localeCenter.y,
+        width: 20,
+        height: 100,
+        rotation: 0,
+        draw() {
+
+            context.beginPath();
+            context.save();
+            context.translate(rectangleP3.x, rectangleP3.y);
+            context.rotate(rectangleP3.rotation);
+            context.fillStyle = 'green';
+            context.fillRect(-rectangleP3.width / 2, -rectangleP3.height / 2, rectangleP3.width, rectangleP3.height);
+            context.fill();
+            context.restore();
+        }
+    }
+
+    function gameLoop3(timeStamp) {
+        secondsPassed = (timeStamp - oldTimeStamp) / 1000;
+        oldTimeStamp = timeStamp;
+
+        clearCanvas();
+
+        rectangleP3.draw();
+
+        window.requestAnimationFrame(gameLoop3);
+    }
+
+    function startEventMouseMove() {
+        canvas.addEventListener("mousemove", (event) => {
+            const rect = canvas.getBoundingClientRect();
+            let mouseX = event.clientX - rect.left - rectangleP3.x;  
+            let mouseY = event.clientY - rect.top - rectangleP3.y;
+
+            let conner = 0;
+
+            if((mouseX > 0 && mouseY > 0) || (mouseX < 0 && mouseY < 0)) {
+                conner = Math.atan2(Math.sqrt((mouseY) * (mouseY)), Math.sqrt((mouseX) * (mouseX))) + Math.PI / 2;
+            } else {
+                conner = Math.atan2(Math.sqrt((mouseX) * (mouseX)), Math.sqrt((mouseY) * (mouseY)));
+            }
+            console.log(conner);
+            rectangleP3.rotation = conner;
+        });
     }
 
 </script>
