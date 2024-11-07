@@ -15,8 +15,8 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 100vh;
-        height: 100vw;
+        width: 100%;
+        height: 100vh;
     }
 </style>
 <body>
@@ -51,6 +51,7 @@
         createGrid();
 
         window.requestAnimationFrame(gameLoop);
+        // window.requestAnimationFrame(gameLoop4);
     });
 
     class Vector {
@@ -122,7 +123,7 @@
         }
 
         static detectCollision(obj1, obj2) {
-            let distance = Math.sqrt((obj2.x - obj1.x) * (obj2.x - obj1.x) + (obj2.y - obj1.y) * (obj2.y - obj1.y));
+            let distance = Vector.distance(obj1, obj2);
             let vectorDirection = Vector.sub({ x: obj2.x, y: obj2.y }, { x: obj1.x, y: obj1.y });
             let vectorDirectionNorm = Vector.normalize(vectorDirection, distance);
             let vectorV = Vector.sub({ x: obj1.vx, y: obj1.vy }, { x: obj2.vx, y: obj2.vy });
@@ -641,6 +642,15 @@
         }
     }
 
+    function drawText() {
+        context.beginPath();
+        context.font = "23px Arial";
+        context.textAlign = 'center';
+        context.textBaseLine = 'center';
+        context.fillStyle = 'gray';
+        context.fillText("Comment line 53 and cancle line 54 to run Practice 4", canvasWidth / 2, 100);
+    }
+
     let secondsPassed = 0;
     let oldTimeStamp = 0;
     function gameLoop(timeStamp) {
@@ -650,6 +660,7 @@
 
         drawGrid();
         drawObject();
+        drawText();
 
         // detectWallByForceBrute();
         // detectCollisionByForceBrute();
@@ -662,6 +673,189 @@
         updateObject(secondsPassed);
 
         window.requestAnimationFrame(gameLoop);
+    }
+
+
+
+    // Practice 4
+
+    let wall = {
+        x: canvasWidth * 3 / 5,
+        y: canvasHeight * 1 / 5,
+        width: 1,
+        height: canvasHeight * 3 / 5,
+         
+        draw() {
+            context.beginPath();
+            context.fillStyle = 'red';
+            context.fillRect(wall.x, wall.y, wall.width, wall.height);
+            context.fill();
+        }
+    }
+
+    let bullet = {
+        x: canvasWidth / 2,
+        y: canvasHeight / 2,
+        nextX: 0,
+        nextY: 0,
+        vx: -1000,
+        vy: -500,
+        radius: 5,
+
+        // function nay nang cao qua dung ChatGPT :DDD
+        doesVectorIntersectRectangle(x1, y1, x2, y2, xMin, xMax, yMin, yMax) {
+            // Bước 1: Kiểm tra xem một trong hai điểm có nằm trong hình chữ nhật không
+            function isPointInsideRect(x, y, xMin, xMax, yMin, yMax) {
+                return x >= xMin && x <= xMax && y >= yMin && y <= yMax;
+            }
+
+            if (isPointInsideRect(x1, y1, xMin, xMax, yMin, yMax) || isPointInsideRect(x2, y2, xMin, xMax, yMin, yMax)) {
+                return true;
+            }
+
+            // Bước 2: Kiểm tra giao điểm giữa vector và các cạnh của hình chữ nhật
+            function checkIntersection(x1, y1, x2, y2, x3, y3, x4, y4) {
+                let dx1 = x2 - x1;
+                let dy1 = y2 - y1;
+                let dx2 = x4 - x3;
+                let dy2 = y4 - y3;
+                let dx3 = x3 - x1;
+                let dy3 = y3 - y1;
+
+                let denominator = dx1 * dy2 - dy1 * dx2;
+
+                // Nếu định thức là 0, thì hai đoạn thẳng song song hoặc đồng nhất
+                if (denominator === 0) return false;
+
+                let t = (dx3 * dy2 - dy3 * dx2) / denominator;
+                let u = (dx3 * dy1 - dy3 * dx1) / denominator;
+
+                // Kiểm tra điều kiện của t và u
+                return (t >= 0 && t <= 1 && u >= 0 && u <= 1);
+            }
+
+            // Kiểm tra từng cạnh của hình chữ nhật
+            // Cạnh trái
+            if (checkIntersection(x1, y1, x2, y2, xMin, yMin, xMin, yMax)) return true;
+
+            // Cạnh phải
+            if (checkIntersection(x1, y1, x2, y2, xMax, yMin, xMax, yMax)) return true;
+
+            // Cạnh dưới
+            if (checkIntersection(x1, y1, x2, y2, xMin, yMin, xMax, yMin)) return true;
+
+            // Cạnh trên
+            if (checkIntersection(x1, y1, x2, y2, xMin, yMax, xMax, yMax)) return true;
+
+            // Nếu không có cạnh nào bị cắt
+            return false;
+        },
+
+        checkIntersectingRectangle(x, y, nX, nY, rectMinX, rectMaxX, rectMinY, rectMaxY) {
+            if(nX <= rectMaxX && nX >= rectMinX && nY <= rectMaxY && nY >=rectMinY) {
+                return true;
+            }
+
+            if(bullet.doesVectorIntersectRectangle(x, y, nX, nY, rectMinX, rectMaxX, rectMinY, rectMaxY)) {
+                console.log(rectMinX + " " + rectMaxX)
+                return true;
+            }
+
+            return false;
+        },
+
+        checkProjectedPath() {
+            bullet.nextX = bullet.x + bullet.vx * secondsPassed;
+            bullet.nextY = bullet.y + bullet.vy * secondsPassed;
+
+            if(bullet.checkIntersectingRectangle(bullet.x, bullet.y, bullet.nextX, bullet.nextY, wall.x, wall.x + wall.width, wall.y, wall.y + wall.height)) {
+                if(bullet.vx >= 0 && bullet.vy <= 0) {
+                    if(bullet.y < wall.y + wall.height) {
+                        bullet.vx = -Math.abs(bullet.vx);
+                    } else {
+                        bullet.vy = Math.abs(bullet.vy);
+                    }
+                } else if(bullet.vx <=0 && bullet.vy <= 0) {
+                    if(bullet.y < wall.y + wall.height) {
+                        bullet.vx = Math.abs(bullet.vx);
+                    } else {
+                        bullet.vy = Math.abs(bullet.vy);
+                    }
+                } else if(bullet.vx >= 0 && bullet.vy >= 0) {
+                    if(bullet.y < wall.y) {
+                        bullet.vy = -Math.abs(bullet.vy);
+                    } else {
+                        bullet.vx = -Math.abs(bullet.vx);
+                    }
+                } else if(bullet.vx <= 0 && bullet.vy >=0) {
+                    if(bullet.y < wall.y) {
+                        bullet.vy = -Math.abs(bullet.vy);
+                    } else {
+                        bullet.vx = Math.abs(bullet.vx);
+                    }
+                }
+            }
+        },
+
+        draw() {
+            context.beginPath();
+            context.fillStyle = 'gray';
+            context.arc(bullet.x, bullet.y, bullet.radius, 0, 2 * Math.PI);
+            context.fill();
+        },
+
+        update(secondsPassed) {
+            bullet.x += bullet.vx * secondsPassed;
+            bullet.y += bullet.vy * secondsPassed;
+        },
+
+        detectWall() {
+            if(bullet.x < bullet.radius) {
+                bullet.x = bullet.radius;
+                bullet.vx = Math.abs(bullet.vx);
+            }
+            if(bullet.x > canvasWidth - bullet.radius) {
+                bullet.x = canvasWidth - bullet.radius;
+                bullet.vx = -Math.abs(bullet.vx);
+            }
+            if(bullet.y < bullet.radius) {
+                bullet.y = bullet.radius;
+                bullet.vy = Math.abs(bullet.vy);
+            }
+            if(bullet.y > canvasHeight - bullet.radius) {
+                bullet.y = canvasHeight - bullet.radius;
+                bullet.vy = -Math.abs(bullet.vy);
+            }
+        }
+    };
+
+    function drawText4() {
+        context.beginPath();
+        context.font = "23px Arial";
+        context.textAlign = 'center';
+        context.textBaseLine = 'center';
+        context.fillStyle = 'gray';
+        context.fillText("Comment line 54 and cancle line 53 to run Practice 2,3", canvasWidth / 2, 100);
+    }
+
+    function gameLoop4(timeStamp) {
+
+        secondsPassed = (timeStamp - oldTimeStamp) / 1000;
+        oldTimeStamp = timeStamp;
+
+        clearCanvas();
+
+        drawText4();
+        wall.draw();
+        bullet.draw(secondsPassed);
+        bullet.update(secondsPassed);
+
+        bullet.checkProjectedPath();
+
+        bullet.detectWall();
+
+
+        window.requestAnimationFrame(gameLoop4);
     }
     
 
