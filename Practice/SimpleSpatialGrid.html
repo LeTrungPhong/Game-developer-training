@@ -105,30 +105,30 @@
         let check11 = false;
 
         if(Math.sqrt((locale00.x - obj.x) * (locale00.x - obj.x) + (locale00.y - obj.y) * (locale00.y - obj.y)) < obj.radius) {
-            indexRow - 1 >= 0 && indexColumn - 1 >=0 ? grid[indexRow - 1][indexColumn - 1].push(obj) : true;
-            indexColumn - 1 >=0 ? grid[indexRow][indexColumn - 1].push(obj) : true;
-            indexRow - 1 >= 0 ? grid[indexRow - 1][indexColumn].push(obj) : true;
+            indexRow - 1 >= 0 && indexColumn - 1 >=0 ? grid[indexRow - 1][indexColumn - 1].push(obj.id) : true;
+            indexColumn - 1 >=0 ? grid[indexRow][indexColumn - 1].push(obj.id) : true;
+            indexRow - 1 >= 0 ? grid[indexRow - 1][indexColumn].push(obj.id) : true;
             check00 = true;
         }
 
         if(Math.sqrt((locale01.x - obj.x) * (locale01.x - obj.x) + (locale01.y - obj.y) * (locale01.y - obj.y)) < obj.radius) {
-            indexColumn - 1 >=0 ? grid[indexRow][indexColumn - 1].push(obj) : true;
-            indexRow + 1 <= sizeRow - 1 && indexColumn - 1 >=0 ? grid[indexRow + 1][indexColumn - 1].push(obj) : true;
-            indexRow + 1 <= sizeRow - 1 ? grid[indexRow + 1][indexColumn].push(obj) : true;
+            indexColumn - 1 >=0 ? grid[indexRow][indexColumn - 1].push(obj.id) : true;
+            indexRow + 1 <= sizeRow - 1 && indexColumn - 1 >=0 ? grid[indexRow + 1][indexColumn - 1].push(obj.id) : true;
+            indexRow + 1 <= sizeRow - 1 ? grid[indexRow + 1][indexColumn].push(obj.id) : true;
             check01 = true;
         }
 
         if(Math.sqrt((locale10.x - obj.x) * (locale10.x - obj.x) + (locale10.y - obj.y) * (locale10.y - obj.y)) < obj.radius) {
-            indexRow - 1 >= 0 ? grid[indexRow - 1][indexColumn].push(obj) : true;
-            indexRow - 1 >= 0 && indexColumn + 1 <= sizeColumn - 1 ? grid[indexRow - 1][indexColumn + 1].push(obj) : true;
-            indexColumn + 1 <= sizeColumn - 1 ? grid[indexRow][indexColumn + 1].push(obj) : true;
+            indexRow - 1 >= 0 ? grid[indexRow - 1][indexColumn].push(obj.id) : true;
+            indexRow - 1 >= 0 && indexColumn + 1 <= sizeColumn - 1 ? grid[indexRow - 1][indexColumn + 1].push(obj.id) : true;
+            indexColumn + 1 <= sizeColumn - 1 ? grid[indexRow][indexColumn + 1].push(obj.id) : true;
             check10 = true;
         }
 
         if(Math.sqrt((locale11.x - obj.x) * (locale11.x - obj.x) + (locale11.y - obj.y) * (locale11.y - obj.y)) < obj.radius) {
-            indexColumn + 1 <= sizeColumn - 1 ? grid[indexRow][indexColumn + 1].push(obj) : true;
-            indexRow + 1 <= sizeRow - 1 ? grid[indexRow + 1][indexColumn].push(obj) : true;
-            indexRow + 1 <= sizeRow - 1 && indexColumn + 1 <= sizeColumn - 1 ? grid[indexRow + 1][indexColumn + 1].push(obj) : true;
+            indexColumn + 1 <= sizeColumn - 1 ? grid[indexRow][indexColumn + 1].push(obj.id) : true;
+            indexRow + 1 <= sizeRow - 1 ? grid[indexRow + 1][indexColumn].push(obj.id) : true;
+            indexRow + 1 <= sizeRow - 1 && indexColumn + 1 <= sizeColumn - 1 ? grid[indexRow + 1][indexColumn + 1].push(obj.id) : true;
             check11 = true;
         }
 
@@ -136,7 +136,7 @@
             // y = 0
 
             if(obj.y - locale00.y < obj.radius) {
-                indexRow - 1 >= 0 ? grid[indexRow - 1][indexColumn].push(obj) : true;
+                indexRow - 1 >= 0 ? grid[indexRow - 1][indexColumn].push(obj.id) : true;
             }
         }
 
@@ -144,7 +144,7 @@
             // x = 0
 
             if(obj.x - locale00.x < obj.radius) {
-                indexColumn - 1 >= 0 ? grid[indexRow][indexColumn - 1].push(obj) : true;
+                indexColumn - 1 >= 0 ? grid[indexRow][indexColumn - 1].push(obj.id) : true;
             }
         }
 
@@ -152,7 +152,7 @@
             // x = 1
 
             if(obj.x > locale11.x - obj.radius) {
-                indexColumn + 1 <= sizeColumn - 1 ? grid[indexRow][indexColumn + 1].push(obj) : true;
+                indexColumn + 1 <= sizeColumn - 1 ? grid[indexRow][indexColumn + 1].push(obj.id) : true;
             }
         }
 
@@ -160,11 +160,11 @@
             // y = 1
 
             if(obj.y > locale11.y - obj.radius) {
-                indexRow + 1 <= sizeRow - 1 ? grid[indexRow + 1][indexColumn].push(obj) : true;
+                indexRow + 1 <= sizeRow - 1 ? grid[indexRow + 1][indexColumn].push(obj.id) : true;
             }
         }
 
-        grid[indexRow][indexColumn].push(obj);
+        grid[indexRow][indexColumn].push(obj.id);
     }
 
     function updateGrid() {
@@ -193,12 +193,24 @@
                     for(let k = 0; k < listCollision.length; ++k) {
                         for(let t = k + 1; t < listCollision.length; ++t) {
 
-                            let obj1 = listCollision[k];
-                            let obj2 = listCollision[t];
+                            let obj1;
+                            let obj2;
+
+                            for(let h = 0; h < listObject.length; ++h) {
+                                if(listObject[h].id == listCollision[k]) {
+                                    obj1 = listObject[h];
+                                } else if(listObject[h].id == listCollision[t]) {
+                                    obj2 = listObject[h];
+                                }
+                            }
+
+                            if(obj1 == null || obj2 == null) {
+                                return;
+                            }
 
                             let checkRepeat = false;
                             for(let h = 0; h < temp.length; ++h) {
-                                if((temp[h].obj1 == obj1 && temp[h].obj2 == obj2) || (temp[h].obj1 == obj2 && temp[h].obj2 == obj1)) {
+                                if((temp[h].id1 == obj1.id && temp[h].id2 == obj2.id) || (temp[h].id1 == obj2.id && temp[h].id2 == obj1.id)) {
                                     checkRepeat = true;
                                 }
                             }
@@ -225,7 +237,7 @@
                                 obj2.vx = obj2.vx + impluse * obj1.mass * vectorDirectionNorm.x;
                                 obj2.vy = obj2.vy + impluse * obj1.mass * vectorDirectionNorm.y;
 
-                                temp.push({ obj1, obj2 });
+                                temp.push({ id1: obj1.id, id2: obj2.id });
                             }
                         }
                     }
@@ -242,7 +254,17 @@
             const count = grid[i][j].length;
             if(count != 0) {
                 for(let k = 0; k < grid[i][j].length; ++k) {
-                    let object = grid[i][j][k];
+                    let id = grid[i][j][k];
+                    let object;
+                    for(let t = 0; t < listObject.length; ++t) {
+                        if(id == listObject[t].id) {
+                            object = listObject[t];
+                        }
+                    }
+
+                    if(object == null) {
+                        continue;
+                    }
                     
                     if(object.y < object.radius) {
                         object.vy = Math.abs(object.vy) * expent;
@@ -256,7 +278,17 @@
             const count = grid[i][j].length;
             if(count != 0) {
                 for(let k = 0; k < grid[i][j].length; ++k) {
-                    let object = grid[i][j][k];
+                    let id = grid[i][j][k];
+                    let object;
+                    for(let t = 0; t < listObject.length; ++t) {
+                        if(id == listObject[t].id) {
+                            object = listObject[t];
+                        }
+                    }
+
+                    if(object == null) {
+                        continue;
+                    }
                     
                     if(object.y > canvasHeight - object.radius) {
                         object.vy = -Math.abs(object.vy) * expent;
@@ -270,7 +302,17 @@
             const count = grid[i][j].length;
             if(count != 0) {
                 for(let k = 0; k < grid[i][j].length; ++k) {
-                    let object = grid[i][j][k];
+                    let id = grid[i][j][k];
+                    let object;
+                    for(let t = 0; t < listObject.length; ++t) {
+                        if(id == listObject[t].id) {
+                            object = listObject[t];
+                        }
+                    }
+
+                    if(object == null) {
+                        continue;
+                    }
                     
                     if(object.x < object.radius) {
                         object.vx = Math.abs(object.vx) * expent;
@@ -284,7 +326,17 @@
             const count = grid[i][j].length;
             if(count != 0) {
                 for(let k = 0; k < grid[i][j].length; ++k) {
-                    let object = grid[i][j][k];
+                    let id = grid[i][j][k];
+                    let object;
+                    for(let t = 0; t < listObject.length; ++t) {
+                        if(id == listObject[t].id) {
+                            object = listObject[t];
+                        }
+                    }
+
+                    if(object == null) {
+                        continue;
+                    }
                     
                     if(object.x > canvasWidth - object.radius) {
                         object.vx = -Math.abs(object.vx) * expent;
@@ -304,10 +356,11 @@
     }
 
     class Circle extends GameObject {
-        constructor(x, y, vx, vy, r) {
+        constructor(x, y, vx, vy, r, id) {
             super(x, y, vx, vy);
             this.radius = r;
             this.mass = this.radius;
+            this.id = id
         }
 
         draw() {
@@ -325,10 +378,10 @@
 
     function CreateListCircle() {
         listObject = [
-            new Circle(100, 100, 300, 600, 20),
-            new Circle(300, 300, -350, -600, 30),
-            new Circle(200, 300, -250, -500, 30),
-            new Circle(400, 400, -150, -400, 30)
+            new Circle(100, 100, 300, 600, 20, 1),
+            new Circle(300, 300, -350, -600, 30, 2),
+            new Circle(200, 300, -250, -500, 30, 3),
+            new Circle(400, 400, -150, -400, 30, 4)
         ];
     }
 
