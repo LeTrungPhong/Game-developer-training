@@ -1,35 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <style>
-        * {
-            padding: 0;
-            margin: 0;
-        }
-
-        body {
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-around;
-        }
-    </style>
-</head>
-<body>
-    <canvas style="border: 1px solid gray;" id="canvas1">
-
-    </canvas>
-    <canvas style="border: 1px solid gray;" id="canvas2">
-
-    </canvas>
-</body>
-<script>
-    let canvas1;
+let canvas1;
     let canvas2;
     let context1;
     let context2;
@@ -140,21 +109,21 @@
         context1.fillStyle = "black";
         context1.fillText("Space to Jump", 200, 60);
 
-        context1.font = "17px Arial";
-        context1.textAlign = "center";
-        context1.textBaseline = "bottom";
-        context1.fillStyle = "Gray";
-        context1.fillText("Cancle comment in line 59 and command line 58", canvasWidth / 2, 80);
-        context1.fillText("in source code to run Practice 2", canvasWidth / 2, 100);
+        // context1.font = "17px Arial";
+        // context1.textAlign = "center";
+        // context1.textBaseline = "bottom";
+        // context1.fillStyle = "Gray";
+        // context1.fillText("Cancle comment in line 59 and command line 58", canvasWidth / 2, 80);
+        // context1.fillText("in source code to run Practice 2", canvasWidth / 2, 100);
     }
 
     function drawText2() {
-        context2.font = "17px Arial";
-        context2.textAlign = "center";
-        context2.textBaseline = "bottom";
-        context2.fillStyle = "Gray";
-        context2.fillText("Cancle comment in line 58 and command line 59", canvasWidth / 2, 80);
-        context2.fillText("in source code to run Practice 1", canvasWidth / 2, 100);
+        // context2.font = "17px Arial";
+        // context2.textAlign = "center";
+        // context2.textBaseline = "bottom";
+        // context2.fillStyle = "Gray";
+        // context2.fillText("Cancle comment in line 58 and command line 59", canvasWidth / 2, 80);
+        // context2.fillText("in source code to run Practice 1", canvasWidth / 2, 100);
     }
 
     function gameLoop1(timeStamp) {
@@ -335,6 +304,3 @@
             }
         }
     }
-
-</script>
-</html>

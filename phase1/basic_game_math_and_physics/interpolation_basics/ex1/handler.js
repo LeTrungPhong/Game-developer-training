@@ -1,27 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<style>
-    * {
-        padding: 0;
-        margin: 0;
-    }
-    body {
-        width: 100%;
-        height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-</style>
-<body>
-    <canvas style="border: 1px solid gray;" id="canvas"></canvas>
-</body>
-<script>
     let canvas;
     let context;
     const canvasWidth = window.screen.width * 1 / 3;
@@ -41,6 +17,18 @@
         color: "blue"
     };
 
+    let circle2 = {
+        position: { x: 50, y: 400 },
+        radius: 20,
+        color: "blue"
+    }
+
+    let circle3 = {
+        position: { x: 50, y: 400 },
+        radius: 20,
+        color: "blue"
+    }
+
     let animation = {
         start: { x: 50, y: 200 },
         end: { x: 500, y: 200 },
@@ -57,18 +45,27 @@
         if (!animation.startTime) animation.startTime = time;
         const elapsed = time - animation.startTime;
 
-        // Calculate the interpolation factor `t`
         let t = Math.min(elapsed / animation.duration, 1);
+        let k = t;
+        let h = t;
+        t = easeOutQuad(t);
+        k = easeInOutQuad(k);
+        h = easeInQuad(h);
 
-        // Interpolate position using `lerp`
         circle.position.x = lerp(animation.start.x, animation.end.x, t);
         circle.position.y = lerp(animation.start.y, animation.end.y, t);
 
-        // Clear the canvas and draw the circle at its new position
+        circle2.position.x = lerp(animation.start.x, animation.end.x, k);
+        circle2.position.y = lerp(animation.start.y + 100, animation.end.y + 100, k);
+
+        circle3.position.x = lerp(animation.start.x, animation.end.x, h);
+        circle3.position.y = lerp(animation.start.y + 200, animation.end.y + 200, h);
+
         context.clearRect(0, 0, canvas.width, canvas.height);
         drawCircle(circle);
+        drawCircle(circle2);
+        drawCircle(circle3);
 
-        // Continue animation until `t` reaches 1
         if (t < 1) requestAnimationFrame(animateCircle);
     }
 
@@ -79,6 +76,18 @@
         context.fill();
     }
 
+    function easeOutQuad(t) {
+        return t * (2 - t); 
+    }
+
+    // Practice 1
+    function easeInOutQuad(t) {
+        return t * t * (3.0 - 2.0 * t);
+    }
+
+    function easeInQuad(t) {
+        return t * t;
+    }
+
+
     requestAnimationFrame(animateCircle);
-</script>
-</html>

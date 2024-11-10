@@ -1,19 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <canvas id="canvas" style="border: 1px solid lightgrey">
-        Your browser does not support the HTML5 canvas tag.
-    </canvas>
-    <img id="my-image" style="display: none;" src="/Practice/img/my-image.png" alt="">
-    <img style="display: none;" id="sprite_animation" src="/Practice/img/sprite_animation.png" alt="">
-</body>
-<script>
-    let myImage;
+let myImage;
     let spriteAnimation;
     let canvas;
     let context;
@@ -46,7 +31,7 @@
         oldTimeStamp = timeStamp;
         
         context.clearRect(0, 0, canvas.width, canvas.height);
-        context.drawImage(spriteAnimation, indexColumn * frameWidth, indexRow * frameHeight, frameWidth, frameHeight, 10, 30, frameWidth, frameHeight);
+        context.drawImage(spriteAnimation, indexColumn * frameWidth, indexRow * frameHeight, frameWidth, frameHeight, canvasWidth / 2 - 40, canvasHeight / 2 - 40, frameWidth, frameHeight);
 
         console.log(indexColumn + " " + indexRow);
 
@@ -110,5 +95,3 @@
     //     }
     // //Wait for next step in the loop
     // }, 1000);
-</script>
-</html>
