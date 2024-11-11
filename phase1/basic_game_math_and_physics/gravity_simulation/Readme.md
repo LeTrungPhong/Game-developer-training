@@ -1,2 +1,2 @@
-https://letrungphong.github.io/Game-developer-training/phase1/basic_game_math_and_physics/gravity_simulation/ex1/index.html
-https://letrungphong.github.io/Game-developer-training/phase1/basic_game_math_and_physics/gravity_simulation/ex2/index.html
+[gravity_simulation1](https://letrungphong.github.io/Game-developer-training/phase1/basic_game_math_and_physics/gravity_simulation/ex1/index.html)<br>
+[gravity_simulation2](https://letrungphong.github.io/Game-developer-training/phase1/basic_game_math_and_physics/gravity_simulation/ex2/index.html)<br>

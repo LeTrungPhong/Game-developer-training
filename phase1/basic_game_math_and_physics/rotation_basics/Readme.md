@@ -1,3 +1,3 @@
-https://letrungphong.github.io/Game-developer-training/phase1/basic_game_math_and_physics/rotation_basics/ex1/index.html
-https://letrungphong.github.io/Game-developer-training/phase1/basic_game_math_and_physics/rotation_basics/ex2/index.html
-https://letrungphong.github.io/Game-developer-training/phase1/basic_game_math_and_physics/rotation_basics/ex3/index.html
+[rotation_basics1](https://letrungphong.github.io/Game-developer-training/phase1/basic_game_math_and_physics/rotation_basics/ex1/index.html)<br>
+[rotation_basics2](https://letrungphong.github.io/Game-developer-training/phase1/basic_game_math_and_physics/rotation_basics/ex2/index.html)<br>
+[rotation_basics3](https://letrungphong.github.io/Game-developer-training/phase1/basic_game_math_and_physics/rotation_basics/ex3/index.html)<br>

@@ -1,2 +1,2 @@
-https://letrungphong.github.io/Game-developer-training/phase1/get_started_with_game_development/create_a_proper_game_loop/ex1_2_3/index.html
-https://letrungphong.github.io/Game-developer-training/phase1/get_started_with_game_development/create_a_proper_game_loop/ex4_5/index.html
+[create_a_proper_game_loop1_2_3](https://letrungphong.github.io/Game-developer-training/phase1/get_started_with_game_development/create_a_proper_game_loop/ex1_2_3/index.html)<br>
+[create_a_proper_game_loop4_5](https://letrungphong.github.io/Game-developer-training/phase1/get_started_with_game_development/create_a_proper_game_loop/ex4_5/index.html)<br>

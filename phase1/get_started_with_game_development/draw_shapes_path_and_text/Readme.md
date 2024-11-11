@@ -1,5 +1,5 @@
-https://letrungphong.github.io/Game-developer-training/phase1/get_started_with_game_development/draw_shapes_path_and_text/ex1/index.html
-https://letrungphong.github.io/Game-developer-training/phase1/get_started_with_game_development/draw_shapes_path_and_text/ex2/index.html
-https://letrungphong.github.io/Game-developer-training/phase1/get_started_with_game_development/draw_shapes_path_and_text/ex3/index.html
-https://letrungphong.github.io/Game-developer-training/phase1/get_started_with_game_development/draw_shapes_path_and_text/ex4/index.html
-https://letrungphong.github.io/Game-developer-training/phase1/get_started_with_game_development/draw_shapes_path_and_text/ex5/index.html
+[draw_shapes_path_and_text1](https://letrungphong.github.io/Game-developer-training/phase1/get_started_with_game_development/draw_shapes_path_and_text/ex1/index.html)<br>
+[draw_shapes_path_and_text2](https://letrungphong.github.io/Game-developer-training/phase1/get_started_with_game_development/draw_shapes_path_and_text/ex2/index.html)<br>
+[draw_shapes_path_and_text3](https://letrungphong.github.io/Game-developer-training/phase1/get_started_with_game_development/draw_shapes_path_and_text/ex3/index.html)<br>
+[draw_shapes_path_and_text4](https://letrungphong.github.io/Game-developer-training/phase1/get_started_with_game_development/draw_shapes_path_and_text/ex4/index.html)<br>
+[draw_shapes_path_and_text5](https://letrungphong.github.io/Game-developer-training/phase1/get_started_with_game_development/draw_shapes_path_and_text/ex5/index.html)<br>
