@@ -1,0 +1,2 @@
+https://letrungphong.github.io/Game-developer-training/phase1/basic_game_math_and_physics/vectors_speed_and_velocity/ex1_2/index.html
+https://letrungphong.github.io/Game-developer-training/phase1/basic_game_math_and_physics/vectors_speed_and_velocity/ex3/index.html
