@@ -25,6 +25,8 @@
             duration: 2000,
             startTime: null
         }
+
+        requestAnimationFrame(animateCircle);
     });
 
     let circle = {
@@ -101,8 +103,6 @@
         drawCircle(circle2);
         drawCircle(circle3);
 
-
-
         requestAnimationFrame(animateCircle);
     }
 
@@ -125,6 +125,3 @@
     function easeInQuad(t) {
         return t * t;
     }
-
-
-    requestAnimationFrame(animateCircle);
