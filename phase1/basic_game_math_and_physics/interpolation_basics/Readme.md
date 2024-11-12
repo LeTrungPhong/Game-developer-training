@@ -1,0 +1,3 @@
+[interpolation_basics1](https://letrungphong.github.io/Game-developer-training/phase1/basic_game_math_and_physics/interpolation_basics/ex1/index.html)<br>
+[interpolation_basics2](https://letrungphong.github.io/Game-developer-training/phase1/basic_game_math_and_physics/interpolation_basics/ex2/index.html)<br>
+[interpolation_basics3](https://letrungphong.github.io/Game-developer-training/phase1/basic_game_math_and_physics/interpolation_basics/ex3/index.html)<br>

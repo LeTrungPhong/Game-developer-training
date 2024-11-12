@@ -7,6 +7,9 @@
 [rotation_basics3](https://letrungphong.github.io/Game-developer-training/phase1/basic_game_math_and_physics/rotation_basics/ex3/index.html)<br>
 [vectors_speed_and_velocity1_2](https://letrungphong.github.io/Game-developer-training/phase1/basic_game_math_and_physics/vectors_speed_and_velocity/ex1_2/index.html)<br>
 [vectors_speed_and_velocity3](https://letrungphong.github.io/Game-developer-training/phase1/basic_game_math_and_physics/vectors_speed_and_velocity/ex3/index.html)<br>
+[interpolation_basics1](https://letrungphong.github.io/Game-developer-training/phase1/basic_game_math_and_physics/interpolation_basics/ex1/index.html)<br>
+[interpolation_basics2](https://letrungphong.github.io/Game-developer-training/phase1/basic_game_math_and_physics/interpolation_basics/ex2/index.html)<br>
+[interpolation_basics3](https://letrungphong.github.io/Game-developer-training/phase1/basic_game_math_and_physics/interpolation_basics/ex3/index.html)<br>
 [create_a_proper_game_loop1_2_3](https://letrungphong.github.io/Game-developer-training/phase1/get_started_with_game_development/create_a_proper_game_loop/ex1_2_3/index.html)<br>
 [create_a_proper_game_loop4_5](https://letrungphong.github.io/Game-developer-training/phase1/get_started_with_game_development/create_a_proper_game_loop/ex4_5/index.html)<br>
 [create_a_smooth_canvas_animation1_2_3_4_5](https://letrungphong.github.io/Game-developer-training/phase1/get_started_with_game_development/create_a_smooth_canvas_animation/ex1_2_3_4_5/index.html)<br>
