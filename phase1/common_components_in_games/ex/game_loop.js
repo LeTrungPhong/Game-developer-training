@@ -1,5 +1,8 @@
 import { canvasWidth, canvasHeight, sizeRow, sizeColumn } from "./common.js";
 import SpawnManager from "./spawn_manager.js";
+import Player from "./player_controller.js";
+import RectCollider from "./rectangle_collider.js";
+import InputController from "./input_controller.js";
 
 let canvas;
 let context;
@@ -7,13 +10,8 @@ let deltaTime;
 let lastTime;
 
 const spawnManager = new SpawnManager();
-
-// const imageTest = new Star(200, 200, 0, 0, 20, 'img/star-solid.svg');
-// const imageTest1 = new Star(300, 200, 0, 0, 20, 'img/star-solid.svg');
-// const imageTest2 = new Star(400, 200, 0, 0, 20, 'img/star-solid.svg');
-
-const starImg = new Image();
-starImg.src = 'img/star-solid.svg';
+const player = new Player(canvasWidth / 2, canvasHeight - 70, 0, 0, 70, 70);
+const inputController = new InputController();
 
 window.addEventListener("DOMContentLoaded", () => {
     canvas = document.getElementById('canvas');
@@ -33,13 +31,29 @@ function gameLoop(timeStamp) {
     }
     lastTime = timeStamp;
 
-    // imageTest.draw(context);
-    // imageTest1.draw(context);
-    // imageTest2.draw(context);
-
     clearCanvas();
     
     spawnManager.update(deltaTime, context);
+
+    player.draw(context);
+    player.update(deltaTime);
+    player.detectWall();
+
+    if (inputController.isKeyPressed('ArrowLeft')) {
+        player.vx = -200;
+    } else {
+        if(player.vx < 0) {
+            player.vx = 0;
+        }
+    }
+
+    if (inputController.isKeyPressed('ArrowRight')) {
+        player.vx = 200;
+    } else {
+        if(player.vx > 0) {
+            player.vx = 0;
+        }
+    }
 
     window.requestAnimationFrame(gameLoop);
 }

@@ -8,11 +8,11 @@ export default class GameObject {
         collider.gameObject = this;
     }
 
-    update(deltaTime) {
+    update() {
         throw new Error("update() must be implemented in a subclass");
     }
 
-    draw(context) {
+    draw() {
         throw new Error("draw() must be implemented in a subclass");
     }
 }

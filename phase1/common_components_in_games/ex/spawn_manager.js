@@ -18,7 +18,7 @@ export default class SpawnManager {
                 const randomPosX = Math.floor(Math.random() * ( canvasWidth - 40 - 40 + 1 )) + 40;
                 const randomRadius = Math.floor(Math.random() * ( 30 - 20 + 1 )) + 20;
                 const speedRandom = Math.floor(Math.random() * (this.speed + 5 - (this.speed - 5) + 1)) + this.speed - 5;
-                this.listStar.push(new Star(randomPosX, -40, 0, speedRandom, randomRadius, 'img/star-solid.svg'));
+                this.listStar.push(new Star(randomPosX, -40, 0, speedRandom, randomRadius));
             }
 
             this.level++;
