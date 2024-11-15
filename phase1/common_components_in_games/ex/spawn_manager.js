@@ -5,7 +5,7 @@ export default class SpawnManager {
     constructor() {
         this.listStar = [];
         this.level = 4;
-        this.speed = 40
+        this.speed = 300,
         this.hiddenItem = 0;
         this.timeCount = 4;
         this.timeSpace = 4;

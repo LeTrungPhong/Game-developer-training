@@ -20,9 +20,9 @@ export default class Player extends GameObject {
         context.beginPath();
         context.drawImage(this.image, this.x, this.y, this.width, this.height);
 
-        context.beginPath();
-        context.strokeStyle = 'blue';
-        context.strokeRect(this.x, this.y, this.width, this.height);
+        // context.beginPath();
+        // context.strokeStyle = 'blue';
+        // context.strokeRect(this.x, this.y, this.width, this.height);
     }
 
     detectWall() {
