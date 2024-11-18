@@ -1,0 +1,1 @@
+[vectors_speed_and_velocity3](https://letrungphong.github.io/Game-developer-training/phase1/common_components_in_games/ex/index.html)<br>

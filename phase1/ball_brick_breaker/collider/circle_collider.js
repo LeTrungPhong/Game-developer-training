@@ -1,18 +1,19 @@
 import Collider from "./collider_abstract.js";
+// import RectCollider from "./rectangle_collider";
 
 export default class CircleCollider extends Collider {
-    constructor(gameObject, radius) {
-        super(gameObject);
+    constructor(x, y, radius) {
+        super(x, y);
         this.radius = radius;
     }
 
     checkCollision(other) {
-        if (other instanceof CircleCollider) {
-            const dx = this.gameObject.x - other.gameObject.x;
-            const dy = this.gameObject.y - other.gameObject.y;
+        if(other instanceof CircleCollider) {
+            const dx = this.x - other.x;
+            const dy = this.y - other.y;
             const distance = Math.sqrt(dx * dx + dy * dy);
             return distance < this.radius + other.radius;
-        } else if (other instanceof RectCollider) {
+        } else if(other instanceof RectCollider) {
             return other.checkCollision(this);
         }
         return false;

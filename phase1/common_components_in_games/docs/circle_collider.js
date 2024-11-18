@@ -13,7 +13,7 @@ export default class CircleCollider extends Collider {
             const distance = Math.sqrt(dx * dx + dy * dy);
             return distance < this.radius + other.radius;
         } else if (other instanceof RectCollider) {
-            return other.checkCollision(this); // delegate to rectCollider
+            return other.checkCollision(this); 
         }
         return false;
     }

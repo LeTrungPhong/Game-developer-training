@@ -13,6 +13,11 @@ export default class GameManager {
 
         this.imageHeartDie = new Image();
         this.imageHeartDie.src = 'img/heartDie.webp';
+
+        this.boolAudioEndGame = true;
+
+        this.audioEndGame = new Audio();
+        this.audioEndGame.src = 'audio/drum.mp3';
     }
 
     setState(newState) {
@@ -38,10 +43,15 @@ export default class GameManager {
 
     draw(context) {
         if(this.heart > 0) {
-            
+            this.boolAudioEndGame = true;
         } else {
             this.setState('ending');
             this.drawEndGame(context);
+
+            if(this.boolAudioEndGame) {
+                this.audioEndGame.play();
+                this.boolAudioEndGame = false;
+            }
         }
         this.drawHeart(context);
         this.drawScore(context);
