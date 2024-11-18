@@ -20,3 +20,4 @@ export const heightTextScore = 50;
 export const radiusBall = 15;
 export const postX = canvasWidth / 2;
 export const postY = heightScore + heightBorder + heightGame - radiusBall;
+export const colorTextItem = 'white';

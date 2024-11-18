@@ -23,7 +23,7 @@ export default class BallManager {
         this.listBall.forEach((ball) => {
             ball.update(deltaTime);
         })
-        if (this.indexBall <= this.listBall.length - 1 && this.timeStamp > this.timeSpace && this.checkBallMove) {
+        if (this.indexBall < this.listBall.length && this.timeStamp > this.timeSpace && this.checkBallMove) {
             this.timeStamp = 0;
             this.listBall[this.indexBall].vx = 50;
             this.listBall[this.indexBall].vy = -500;

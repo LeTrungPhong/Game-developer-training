@@ -14,12 +14,14 @@ import {
     heightTextScore
 } from "../common.js"
 import BallManager from "./ball_manager.js";
+import ObstacleManager from "./obstacle_manager.js";
 
 export default class GameManager {
     constructor() {
         this.score = 0;
         this.state = 'playing';
         this.ballManager = new BallManager();
+        this.obstacleManager = new ObstacleManager();
     }
 
     setState(newState) {
@@ -41,10 +43,12 @@ export default class GameManager {
         this.drawBackgroundGame(context);
         
         this.ballManager.draw(context);
+        this.obstacleManager.draw(context);
     }
 
     update(deltaTime) {
         this.ballManager.update(deltaTime);
+        this.obstacleManager.update(deltaTime);
     }
 
     clearCanvas(context) {

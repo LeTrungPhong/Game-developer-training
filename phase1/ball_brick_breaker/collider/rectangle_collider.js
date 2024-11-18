@@ -1,5 +1,5 @@
 // import CircleCollider from "./circle_collider";
-import Collider from "./collider_abstract";
+import Collider from "./collider_abstract.js";
 
 export default class RectCollider extends Collider {
     constructor(x, y, width, height) {
