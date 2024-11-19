@@ -3,7 +3,7 @@ import Obstacle from "../models/obstacle.js";
 
 export default class ObstacleManager {
     constructor() {
-        this.level = 6;
+        this.level = 3;
         this.thickness = 10;
         this.itemInColumn = sizeColumnItem - 5;
         this.indexList = 0;
@@ -38,6 +38,15 @@ export default class ObstacleManager {
     }
 
     hiddenObstacle() {
+        if(this.indexList != 0) {
+            for(let i = 0; i < this.indexList; ++i) {
+                this.listObstacle[i].forEach((obstacle) => {
+                    if (obstacle != null) {
+                        obstacle.setInterpolation();
+                    }
+                });
+            }
+        }
         if (this.indexList < this.listObstacle.length) {
 
             const numbers = this.getRandomNumbers(sizeColumnItem, this.itemInColumn);
@@ -48,18 +57,6 @@ export default class ObstacleManager {
                     this.listObstacle[this.indexList][i] = new Obstacle(i * itemWidth, heightScore + heightBorder, 0, 0, itemWidth, itemHeight, thicknessItem);
                 }
             }
-
-            if(this.indexList != 0) {
-                for(let i = 0; i < this.indexList; ++i) {
-                    this.listObstacle[i].forEach((obstacle) => {
-                        if (obstacle != null) {
-                            obstacle.setInterpolation();
-                        }
-                    });
-                }
-            }
-
-
             this.indexList++;
         }
     }

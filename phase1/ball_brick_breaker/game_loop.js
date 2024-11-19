@@ -11,7 +11,7 @@ let canvas;
 let context;
 let secondPassed;
 let oldTime = 0;
-const gameManager = new GameManager();
+let gameManager;
 
 
 ////////////////////////////////////////////////////
@@ -23,6 +23,7 @@ window.addEventListener('DOMContentLoaded', () => {
     canvas.style.border = `${canvasBorder}`;
 
     context = canvas.getContext('2d');
+    gameManager = new GameManager(canvas);
 
     requestAnimationFrame(gameLoop);
 });

@@ -5,6 +5,7 @@ export default class GameObject {
         this.vx = vx;
         this.vy = vy;
         this.collider = collider;
+        this.collider.gameObject = this;
     }
 
     update() {

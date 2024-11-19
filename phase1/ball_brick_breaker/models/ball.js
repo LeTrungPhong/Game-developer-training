@@ -3,6 +3,7 @@ import { canvasWidth, heightBorder, heightScore, postX, postY } from "../common.
 import GameObject from "./game_object.js";
 
 export default class Ball extends GameObject {
+
     constructor(x, y, vx, vy, radius) {
         super(x, y, vx, vy, new CircleCollider(x, y, radius));
         this.radius = radius;
@@ -10,6 +11,7 @@ export default class Ball extends GameObject {
         this.postY = postY;
         this.checkInterpolation = false;
         this.timeStamp = null;
+        this.name = 'ball';
 
         this.animation = {
             start: { x: null, y: null },
@@ -75,7 +77,7 @@ export default class Ball extends GameObject {
         this.x = this.lerp(this.animation.start.x, this.animation.end.x, t);
         this.y = this.lerp(this.animation.start.y, this.animation.end.y, t);
 
-        if (t > 1) {
+        if (t >= 1) {
             this.checkInterpolation = false;
         }
     }
@@ -86,5 +88,13 @@ export default class Ball extends GameObject {
 
     easeInQuad(t) {
         return t * t;
+    }
+
+    onCollision(other) {
+        if (other.name == 'obstacle') {
+
+            
+
+        }
     }
 }

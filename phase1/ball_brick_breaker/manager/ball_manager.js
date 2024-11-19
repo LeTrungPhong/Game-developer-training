@@ -9,7 +9,9 @@ export default class BallManager {
         this.listBall = Array.from({ length: 10 }, () => 
             new Ball(postX, postY, 0, 0, radiusBall)
         );
-        this.checkBallMove = true;
+        this.checkStart = false;
+        this.velocityX = 0;
+        this.velocityY = 0;
     }
 
     draw(context) {
@@ -19,18 +21,35 @@ export default class BallManager {
     }
 
     update(deltaTime) {
-        this.timeStamp += deltaTime;
         this.listBall.forEach((ball) => {
             ball.update(deltaTime);
         })
-        if (this.indexBall < this.listBall.length && this.timeStamp > this.timeSpace && this.checkBallMove) {
-            this.timeStamp = 0;
-            this.listBall[this.indexBall].vx = 50;
-            this.listBall[this.indexBall].vy = -500;
-            this.indexBall++;
+        if (this.checkStart) {
+            this.ballMove(deltaTime);
+        }
+    }
 
-            if (this.indexBall == this.listBall.length) {
-                this.checkBallMove = false;
+    ballMove(deltaTime) {
+        this.timeStamp += deltaTime;
+
+        if (this.indexBall < this.listBall.length && this.timeStamp > this.timeSpace) {
+            this.timeStamp = 0;
+            this.listBall[this.indexBall].vx = this.velocityX;
+            this.listBall[this.indexBall].vy = this.velocityY;
+            this.indexBall++;
+        }
+
+        if (this.indexBall == this.listBall.length) {
+            let check = true;
+            for (let i = 0; i < this.listBall.length; ++i) {
+                if (this.listBall[i].vx != 0 || this.listBall[i].vy != 0) {
+                    check = false;
+                    break;
+                }
+            }
+            if (check) {
+                this.timeStamp = 0;
+                this.checkStart = false;
                 this.indexBall = 0;
             }
         }

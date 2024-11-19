@@ -17,6 +17,7 @@ export default class Obstacle extends GameObject {
         this.timeStamp = 0;
         this.checkInterpolation = false;
         this.countInterpolation = 0;
+        this.name = 'obstacle';
     }
 
     update(deltaTime) {
@@ -74,8 +75,6 @@ export default class Obstacle extends GameObject {
 
         this.x = this.lerp(this.animation.start.x, this.animation.end.x, t);
         this.y = this.lerp(this.animation.start.y, this.animation.end.y, t);
-
-        console.log(t)
         
         if (t >= 1) {
             this.checkInterpolation = false;
