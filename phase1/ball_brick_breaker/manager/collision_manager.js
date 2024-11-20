@@ -13,6 +13,7 @@ export default class CollisionManager {
         this.postX = 0;
         this.postY = heightScore + heightBorder;
         this.listCheck = [];
+        this.getThickness = 0;
     }
 
     update(deltaTime) {
@@ -93,6 +94,9 @@ export default class CollisionManager {
                                 if (itemB.checkCollision(itemA) && check) {
                                     this.listCheck.push({ itemA: { id: itemA.id, type: 'static' }, itemB: { id: itemB.id, type: 'dynamic' } });
                                     itemB.gameObject.onCollision(itemA.gameObject);
+                                    if (itemA.gameObject.name == 'obstacle') {
+                                        this.getThickness++;
+                                    }
                                     // console.log(itemB.id + " He " + itemB.type + " 1");
                                 }
                             } else if (this.grid[i][j][k].type == 'dynamic' && this.grid[i][j][h].type == 'static') {
@@ -117,6 +121,9 @@ export default class CollisionManager {
                                 if (itemA.checkCollision(itemB) && check) {
                                     this.listCheck.push({ itemA: { id: itemA.id, type: 'dynamic' }, itemB: { id: itemB.id, type: 'static' } });
                                     itemA.gameObject.onCollision(itemB.gameObject);
+                                    if (itemB.gameObject.name == 'obstacle') {
+                                        this.getThickness++;
+                                    }
                                     // console.log(itemA.id + " He " + itemA.type + " 2 " + itemB.id + " " + deltaTime);
                                     // console.log({ itemA: { id: itemA.id, type: 'dynamic' }, itemB: { id: itemB.id, type: 'static' } })
                                     // console.log(this.listCheck);

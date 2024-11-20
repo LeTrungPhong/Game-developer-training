@@ -86,39 +86,65 @@ export default class GameManager {
         
         this.ballManager.draw(context);
         this.obstacleManager.draw(context);
+        if (this.state == 'end') {
+            this.drawGameover(context);
+        }
     }
 
     update(deltaTime) {
-        this.ballManager.update(deltaTime);
-        this.obstacleManager.update(deltaTime);
-        this.collisionManager.update(deltaTime);
+        if (this.state == 'playing') {
+            this.ballManager.update(deltaTime);
+            this.obstacleManager.update(deltaTime);
+            this.collisionManager.update(deltaTime);
 
-        // console.log(this.checkBallMove + " " + this.ballManager.checkStart);
-        if (this.inputController.isButtonPressed(0) && this.checkBallMove) {
-            this.ballManager.timeStamp = 0;
-            this.ballManager.checkStart = true;
-            
-            const velocityX = this.inputController.mouseX - this.postX;
-            const velocityY = this.inputController.mouseY - this.postY;
-            const speedVelocity = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
-            this.ballManager.velocityX = velocityX * this.speed / speedVelocity;
-            this.ballManager.velocityY = velocityY * this.speed / speedVelocity;
-            this.checkBallMove = false;
+            // console.log(this.checkBallMove + " " + this.ballManager.checkStart);
+            if (this.inputController.isButtonPressed(0) && this.checkBallMove) {
+                this.ballManager.timeStamp = 0;
+                this.ballManager.checkStart = true;
+                
+                const velocityX = this.inputController.mouseX - this.postX;
+                const velocityY = this.inputController.mouseY - this.postY;
+                const speedVelocity = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
+                this.ballManager.velocityX = velocityX * this.speed / speedVelocity;
+                this.ballManager.velocityY = velocityY * this.speed / speedVelocity;
+                this.checkBallMove = false;
+            }
 
+            if (this.ballManager.checkStart == false) {
+                this.checkBallMove = true;
+            }
+
+            if (this.obstacleManager.checkNull == true) {
+                this.addCollisionObstacle();
+            }
+
+            if (this.ballManager.checkObstacleMove == true) {
+                this.obstacleManager.hiddenObstacle();
+                this.ballManager.checkObstacleMove = false;
+            }
+
+            this.updateScore(this.collisionManager.getThickness * 10);
+            this.collisionManager.getThickness = 0;
+
+            this.obstacleManager.listObstacle.forEach((listObstacleRow) => {
+                listObstacleRow.forEach((obstacle) => {
+                    if (obstacle != null) {
+                        if (obstacle.y >= heightScore + heightBorder + itemHeight * (sizeRowItem - 1)) {
+                            this.state = 'end';
+                        }
+                    }
+                })
+            });
         }
+    }
 
-        if (this.ballManager.checkStart == false) {
-            this.checkBallMove = true;
-        }
-
-        if (this.obstacleManager.checkNull == true) {
-            this.addCollisionObstacle();
-        }
-
-        if (this.ballManager.checkObstacleMove == true) {
-            this.obstacleManager.hiddenObstacle();
-            this.ballManager.checkObstacleMove = false;
-        }
+    drawGameover(context) {
+        context.beginPath();
+        context.fillStyle = 'white';
+        context.font = '50px Arial';
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText('Game Over :)))', canvasWidth / 2, canvasHeight / 2);
     }
 
     clearCanvas(context) {
