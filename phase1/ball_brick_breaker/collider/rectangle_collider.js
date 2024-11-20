@@ -23,6 +23,11 @@ export default class RectCollider extends Collider {
             const closestY = Math.max(this.y, Math.min(other.y, this.y + this.height));
             const dx = other.x - closestX;
             const dy = other.y - closestY;
+            
+            // if (dx * dx + dy * dy < other.radius * other.radius) {
+            //     console.log(Math.sqrt(dx * dx + dy * dy) + " " + Math.sqrt(other.radius * other.radius));
+            // }
+
             return dx * dx + dy * dy < other.radius * other.radius;
         }
         return false;

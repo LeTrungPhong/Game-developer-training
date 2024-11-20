@@ -22,6 +22,9 @@ export default class Ball extends GameObject {
     }
 
     update(deltaTime) {
+        // if (this.vx != 0 && this.vy != 0) {
+        //     console.log(this.vx + " " + this.vy + " " + this.x + " " + this.y)
+        // }
         if (this.checkInterpolation) {
             this.interpolationDefaultPost(deltaTime);
         }
@@ -93,7 +96,59 @@ export default class Ball extends GameObject {
     onCollision(other) {
         if (other.name == 'obstacle') {
 
+            const postMinX = Math.max(other.x, Math.min(this.x, other.x + other.width));
+            const postMinY = Math.max(other.y, Math.min(this.y, other.y + other.height));
+
+            const direction = { x: postMinX - this.x, y: postMinY - this.y };
+            const distance = Math.sqrt(direction.x * direction.x + direction.y * direction.y);
+            const directionNorm = { x: direction.x / distance, y: direction.y / distance };
+
+            const overlap = Math.max(0, this.radius - distance);
+            // console.log(overlap);
+            const directionOverlap = { x: directionNorm.x * (overlap + 1), y: directionNorm.y * (overlap + 1) };
             
+            this.x = this.x - directionOverlap.x;
+            this.y = this.y - directionOverlap.y;
+
+            other.thickness = other.thickness - 1;
+
+            if (this.vx >= 0 && this.vy >= 0) {
+                if (this.y <= other.y && this.x <= other.x) {
+                    this.vy = -Math.abs(this.vy);
+                    this.vx = -Math.abs(this.vx);
+                } else if (this.y <= other.y) {
+                    this.vy = -Math.abs(this.vy);
+                } else if (this.x <= other.x) {
+                    this.vx = -Math.abs(this.vx);
+                }
+            } else if (this.vx >= 0 && this.vy <= 0) {
+                if (this.x <= other.x && this.y >= other.y + other.height) {
+                    this.vx = -Math.abs(this.vx);
+                    this.vy = Math.abs(this.vy);
+                } else if (this.x <= other.x) {
+                    this.vx = -Math.abs(this.vx);
+                } else if (this.y >= other.y + other.height) {
+                    this.vy = Math.abs(this.vy);
+                }
+            } else if (this.vx <= 0 && this.vy <= 0) {
+                if (this.x >= other.x + other.width && this.y >= other.y + other.height) {
+                    this.vx = Math.abs(this.vx);
+                    this.vy = Math.abs(this.vy);
+                } else if (this.x >= other.x + other.width) {
+                    this.vx = Math.abs(this.vx);
+                } else if (this.y >= other.y + other.height) {
+                    this.vy = Math.abs(this.vy);
+                }
+            } else if (this.vx <= 0 && this.vy >= 0) {
+                if (this.x >= other.x + other.width && this.y <= other.y) {
+                    this.vx = Math.abs(this.vx);
+                    this.vy = -Math.abs(this.vy);
+                } else if (this.x >= other.x + other.width) {
+                    this.vx = Math.abs(this.vx);
+                } else if (this.y <= other.y) {
+                    this.vy = -Math.abs(this.vy);
+                }
+            }
 
         }
     }

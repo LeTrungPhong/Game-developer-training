@@ -29,7 +29,6 @@ export default class GameManager {
         this.obstacleManager = new ObstacleManager();
         this.inputController = new InputController(canvas);
         this.collisionManager = new CollisionManager();
-        
         this.checkBallMove = true;
         this.postX = postX;
         this.postY = postY;
@@ -54,6 +53,17 @@ export default class GameManager {
         });
     }
 
+    addCollisionObstacle() {
+        this.collisionManager.listColliders['static'] = [];
+        this.obstacleManager.listObstacle.forEach((listObstacleRow) => {
+            listObstacleRow.forEach((obstacle) => {
+                if (obstacle != null) {
+                    this.collisionManager.add(obstacle.collider, 'static');
+                }
+            });
+        })
+    }
+
     setState(newState) {
         this.state = newState;
     }
@@ -71,7 +81,7 @@ export default class GameManager {
         this.drawScore(context);
         this.drawBorder(context);
         this.drawBackgroundGame(context);
-        this.collisionManager.drawGrid(context);
+        // this.collisionManager.drawGrid(context);
         this.drawArrow(context);
         
         this.ballManager.draw(context);
@@ -83,6 +93,7 @@ export default class GameManager {
         this.obstacleManager.update(deltaTime);
         this.collisionManager.update(deltaTime);
 
+        // console.log(this.checkBallMove + " " + this.ballManager.checkStart);
         if (this.inputController.isButtonPressed(0) && this.checkBallMove) {
             this.ballManager.timeStamp = 0;
             this.ballManager.checkStart = true;
@@ -93,10 +104,20 @@ export default class GameManager {
             this.ballManager.velocityX = velocityX * this.speed / speedVelocity;
             this.ballManager.velocityY = velocityY * this.speed / speedVelocity;
             this.checkBallMove = false;
+
         }
 
         if (this.ballManager.checkStart == false) {
             this.checkBallMove = true;
+        }
+
+        if (this.obstacleManager.checkNull == true) {
+            this.addCollisionObstacle();
+        }
+
+        if (this.ballManager.checkObstacleMove == true) {
+            this.obstacleManager.hiddenObstacle();
+            this.ballManager.checkObstacleMove = false;
         }
     }
 

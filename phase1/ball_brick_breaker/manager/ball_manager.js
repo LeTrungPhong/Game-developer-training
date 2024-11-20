@@ -12,6 +12,7 @@ export default class BallManager {
         this.checkStart = false;
         this.velocityX = 0;
         this.velocityY = 0;
+        this.checkObstacleMove = false;
     }
 
     draw(context) {
@@ -51,6 +52,7 @@ export default class BallManager {
                 this.timeStamp = 0;
                 this.checkStart = false;
                 this.indexBall = 0;
+                this.checkObstacleMove = true;
             }
         }
     }

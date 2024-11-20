@@ -3,7 +3,7 @@ import Obstacle from "../models/obstacle.js";
 
 export default class ObstacleManager {
     constructor() {
-        this.level = 3;
+        this.level = 2;
         this.thickness = 10;
         this.itemInColumn = sizeColumnItem - 5;
         this.indexList = 0;
@@ -11,6 +11,7 @@ export default class ObstacleManager {
         this.listObstacle = Array.from({ length: this.level }, () => 
             Array.from({ length: sizeColumnItem }, () => null)
         );
+        this.checkNull = false;
 
         this.hiddenObstacle();
         this.hiddenObstacle();
@@ -18,13 +19,39 @@ export default class ObstacleManager {
     }
 
     update(deltaTime) {
-        this.listObstacle.forEach((listObstacleRow) => {
-            listObstacleRow.forEach((obstacle) => {
-                if (obstacle != null) {
-                    obstacle.update(deltaTime);
+        let check = true;
+
+        for (let i = 0; i < this.listObstacle.length; ++i) {
+            for (let j = 0; j < this.listObstacle[i].length; ++j) {
+                if (this.listObstacle[i][j] != null) {
+                    if (this.listObstacle[i][j].thickness <= 0) {
+                        this.listObstacle[i][j].collider.type = 0;
+                        this.listObstacle[i][j] = null;
+                    } else {
+                        check = false;
+                        this.listObstacle[i][j].update(deltaTime);
+                    }
                 }
-            })
-        })
+            }
+        }
+
+        if (check) {
+            this.nextLevel();
+            this.checkNull = true;
+        }
+    }
+
+    nextLevel() {
+        this.level = this.level + 1;
+        this.thickness = this.thickness + 5;
+        this.indexList = 0;
+        this.listObstacle = Array.from({ length: this.level }, () => 
+            Array.from({ length: sizeColumnItem }, () => null)
+        );
+
+        this.hiddenObstacle();
+        this.hiddenObstacle();
+        this.hiddenObstacle();
     }
 
     draw(context) {
