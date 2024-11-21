@@ -20,3 +20,4 @@
 [draw_shapes_path_and_text5](https://letrungphong.github.io/Game-developer-training/phase1/get_started_with_game_development/draw_shapes_path_and_text/ex5/index.html)<br>
 [set_up_an_html_canvas](https://letrungphong.github.io/Game-developer-training/phase1/get_started_with_game_development/set_up_an_html_canvas/ex/index.html)<br>
 [simple_spatial_grid](https://letrungphong.github.io/Game-developer-training/practice/simple_spatial_grid/index.html)<br>
+[ball_brick_breaker](https://letrungphong.github.io/Game-developer-training/phase1/ball_brick_breaker/index.html)<br>

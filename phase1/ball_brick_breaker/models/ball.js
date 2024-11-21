@@ -151,5 +151,9 @@ export default class Ball extends GameObject {
             }
 
         }
+
+        if (other.name == 'item') {
+            other.collider.type = 0;
+        }
     }
 }

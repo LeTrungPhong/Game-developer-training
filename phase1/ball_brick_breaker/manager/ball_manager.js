@@ -1,4 +1,4 @@
-import { canvasWidth, heightBorder, heightGame, heightScore, postX, postY, radiusBall } from "../common.js";
+import { canvasHeight, canvasWidth, heightBorder, heightGame, heightScore, postX, postY, radiusBall } from "../common.js";
 import Ball from "../models/ball.js";
 
 export default class BallManager {
@@ -19,6 +19,8 @@ export default class BallManager {
         this.listBall.forEach((ball) => {
             ball.draw(context);
         });
+
+        this.drawNumberBall(context);
     }
 
     update(deltaTime) {
@@ -55,5 +57,18 @@ export default class BallManager {
                 this.checkObstacleMove = true;
             }
         }
+    }
+
+    addBall(ball) {
+        this.listBall.push(ball);
+    }
+
+    drawNumberBall(context) {
+        context.beginPath();
+        context.fillStyle = 'white';
+        context.font = '25px Arial';
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText(`Number ball: ${this.listBall.length}x`, canvasWidth / 2, canvasHeight - 20);
     }
 }

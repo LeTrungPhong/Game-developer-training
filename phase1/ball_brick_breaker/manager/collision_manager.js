@@ -14,6 +14,7 @@ export default class CollisionManager {
         this.postY = heightScore + heightBorder;
         this.listCheck = [];
         this.getThickness = 0;
+        this.getBall = 0;
     }
 
     update(deltaTime) {
@@ -72,8 +73,8 @@ export default class CollisionManager {
                     for (let k = 0; k < this.grid[i][j].length; ++k) {
                         for (let h = k + 1; h < this.grid[i][j].length; ++h) {
                             if (this.grid[i][j][k].type == 'static' && this.grid[i][j][h].type == 'dynamic') {
-                                const itemA = this.listColliders['static'].find(item => item.id === this.grid[i][j][k].id);
-                                const itemB = this.listColliders['dynamic'].find(item => item.id === this.grid[i][j][h].id);
+                                let itemA = this.listColliders['static'].find(item => item.id === this.grid[i][j][k].id);
+                                let itemB = this.listColliders['dynamic'].find(item => item.id === this.grid[i][j][h].id);
                                 let check = true;
 
                                 for (let i = 0; i < listCheck.length; ++i) {
@@ -97,11 +98,15 @@ export default class CollisionManager {
                                     if (itemA.gameObject.name == 'obstacle') {
                                         this.getThickness++;
                                     }
+                                    if (itemA.gameObject.name == 'item') {
+                                        itemA = null;
+                                        this.getBall++;
+                                    }
                                     // console.log(itemB.id + " He " + itemB.type + " 1");
                                 }
                             } else if (this.grid[i][j][k].type == 'dynamic' && this.grid[i][j][h].type == 'static') {
-                                const itemA = this.listColliders['dynamic'].find(item => item.id === this.grid[i][j][k].id);
-                                const itemB = this.listColliders['static'].find(item => item.id === this.grid[i][j][h].id);
+                                let itemA = this.listColliders['dynamic'].find(item => item.id === this.grid[i][j][k].id);
+                                let itemB = this.listColliders['static'].find(item => item.id === this.grid[i][j][h].id);
                                 let check = true;
 
                                 for (let i = 0; i < this.listCheck.length; ++i) {
@@ -123,6 +128,10 @@ export default class CollisionManager {
                                     itemA.gameObject.onCollision(itemB.gameObject);
                                     if (itemB.gameObject.name == 'obstacle') {
                                         this.getThickness++;
+                                    }
+                                    if (itemB.gameObject.name == 'item') {
+                                        itemB = null;
+                                        this.getBall++;
                                     }
                                     // console.log(itemA.id + " He " + itemA.type + " 2 " + itemB.id + " " + deltaTime);
                                     // console.log({ itemA: { id: itemA.id, type: 'dynamic' }, itemB: { id: itemB.id, type: 'static' } })

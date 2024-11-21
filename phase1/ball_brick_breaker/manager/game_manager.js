@@ -14,12 +14,16 @@ import {
     heightTextScore,
     postX,
     postY,
-    speedBall
+    speedBall,
+    itemWidth,
+    radiusBall
 } from "../common.js"
 import BallManager from "./ball_manager.js";
 import ObstacleManager from "./obstacle_manager.js";
 import InputController from "../input_controller.js";
 import CollisionManager from "./collision_manager.js"
+import Item from "../models/item.js";
+import Ball from "../models/ball.js";
 
 export default class GameManager {
     constructor(canvas) {
@@ -35,6 +39,7 @@ export default class GameManager {
         this.speed = speedBall;
 
         this.setCollisionManager();
+
     }
 
     setCollisionManager() {
@@ -89,6 +94,7 @@ export default class GameManager {
         if (this.state == 'end') {
             this.drawGameover(context);
         }
+
     }
 
     update(deltaTime) {
@@ -124,7 +130,9 @@ export default class GameManager {
             }
 
             this.updateScore(this.collisionManager.getThickness * 10);
+            this.updateBall(this.collisionManager.getBall);
             this.collisionManager.getThickness = 0;
+            this.collisionManager.getBall = 0;
 
             this.obstacleManager.listObstacle.forEach((listObstacleRow) => {
                 listObstacleRow.forEach((obstacle) => {
@@ -135,6 +143,14 @@ export default class GameManager {
                     }
                 })
             });
+        }
+    }
+
+    updateBall(number) {
+        for (let i = 0; i < number; ++i) {
+            let ball = new Ball(postX, postY, 0, 0, radiusBall);
+            this.ballManager.addBall(ball);
+            this.collisionManager.add(ball.collider, 'dynamic');
         }
     }
 
