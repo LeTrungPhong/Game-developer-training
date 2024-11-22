@@ -15,6 +15,7 @@ export default class CollisionManager {
         this.listCheck = [];
         this.getThickness = 0;
         this.getBall = 0;
+        this.checkShield = false;
     }
 
     update(deltaTime) {
@@ -99,8 +100,12 @@ export default class CollisionManager {
                                         this.getThickness++;
                                     }
                                     if (itemA.gameObject.name == 'item') {
+                                        if (itemA.gameObject.type == 'add_ball') {
+                                            this.getBall++;
+                                        } else if (itemA.gameObject.type == 'shield_ball') {
+                                            this.checkShield = true;
+                                        }
                                         itemA = null;
-                                        this.getBall++;
                                     }
                                     // console.log(itemB.id + " He " + itemB.type + " 1");
                                 }
@@ -130,8 +135,12 @@ export default class CollisionManager {
                                         this.getThickness++;
                                     }
                                     if (itemB.gameObject.name == 'item') {
+                                        if (itemB.gameObject.type == 'add_ball') {
+                                            this.getBall++;
+                                        } else if (itemB.gameObject.type == 'shield_ball') {
+                                            this.checkShield = true;
+                                        }
                                         itemB = null;
-                                        this.getBall++;
                                     }
                                     // console.log(itemA.id + " He " + itemA.type + " 2 " + itemB.id + " " + deltaTime);
                                     // console.log({ itemA: { id: itemA.id, type: 'dynamic' }, itemB: { id: itemB.id, type: 'static' } })

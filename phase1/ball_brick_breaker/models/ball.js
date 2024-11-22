@@ -19,6 +19,7 @@ export default class Ball extends GameObject {
             duration: 0.2,
             startTime: null
         }
+        this.checkShield = false;
     }
 
     update(deltaTime) {
@@ -42,6 +43,13 @@ export default class Ball extends GameObject {
         context.fillStyle = 'white';
         context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
         context.fill();
+
+        if (this.checkShield) {
+            context.beginPath();
+            context.strokeStyle = 'rgb(116, 192, 252)';
+            context.arc(this.x, this.y, this.radius + 5, 0, Math.PI * 2);
+            context.stroke();
+        }
     }
 
     detectWall() {
@@ -61,14 +69,24 @@ export default class Ball extends GameObject {
         }
 
         if (this.y > this.postY && !this.checkInterpolation) {
-            this.vx = 0;
-            this.vy = 0;
-            this.animation.start.x = this.x;
-            this.animation.start.y = this.y;
-            this.animation.startTime = 0;
-            this.timeStamp = 0;
-            this.checkInterpolation = true;
+            if (this.checkShield) {
+                this.y = this.postY;
+                this.vy = -Math.abs(this.vy);
+                this.checkShield = false;
+            } else {
+                this.setInterpolationDefaultPost();
+            }
         }
+    }
+
+    setInterpolationDefaultPost() {
+        this.vx = 0;
+        this.vy = 0;
+        this.animation.start.x = this.x;
+        this.animation.start.y = this.y;
+        this.animation.startTime = 0;
+        this.timeStamp = 0;
+        this.checkInterpolation = true;
     }
 
     interpolationDefaultPost(deltaTime) {

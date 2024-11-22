@@ -14,6 +14,7 @@ export default class ObstacleManager {
         );
         this.checkNull = false;
         this.lucky = 25 / 100;
+        this.checkShield = true;
 
         this.hiddenObstacle();
         this.hiddenObstacle();
@@ -53,11 +54,12 @@ export default class ObstacleManager {
 
     nextLevel() {
         this.level = this.level + 1;
-        this.thickness = this.thickness + 5;
+        this.thickness = this.thickness + 1;
         this.indexList = 0;
         this.listObstacle = Array.from({ length: this.level }, () => 
             Array.from({ length: sizeColumnItem }, () => null)
         );
+        this.checkShield = true;
 
         this.hiddenObstacle();
         this.hiddenObstacle();
@@ -92,9 +94,15 @@ export default class ObstacleManager {
                     const thicknessItem = Math.floor(Math.random() * (this.thickness + 5 - (this.thickness - 5) + 1)) + this.thickness - 5;
                     this.listObstacle[this.indexList][i] = new Obstacle(i * itemWidth, heightScore + heightBorder, 0, 0, itemWidth, itemHeight, thicknessItem);
                 } else {
+                    let check = true;
                     const randomLucky = Math.random();
                     if (randomLucky <= this.lucky) {
-                        this.listObstacle[this.indexList][i] = new Item(i * itemWidth + itemWidth / 2, heightScore + heightBorder + itemHeight / 2, 0, 0, itemWidth * (4 / 5) / 2);
+                        check = false;
+                        this.listObstacle[this.indexList][i] = new Item(i * itemWidth + itemWidth / 2, heightScore + heightBorder + itemHeight / 2, 0, 0, itemWidth * (4 / 5) / 2, 'add_ball');
+                    }
+                    if (check && Math.random() <= this.lucky && this.checkShield) {
+                        this.checkShield = false;
+                        this.listObstacle[this.indexList][i] = new Item(i * itemWidth + itemWidth / 2, heightScore + heightBorder + itemHeight / 2, 0, 0, itemWidth * (4 / 5) / 2, 'shield_ball');
                     }
                 }
             }

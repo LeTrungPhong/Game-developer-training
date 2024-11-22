@@ -3,7 +3,7 @@ import Ball from "../models/ball.js";
 
 export default class BallManager {
     constructor() {
-        this.timeSpace = 0.2;
+        this.timeSpace = 0.05;
         this.timeStamp = 0;
         this.indexBall = 0;
         this.listBall = Array.from({ length: 10 }, () => 

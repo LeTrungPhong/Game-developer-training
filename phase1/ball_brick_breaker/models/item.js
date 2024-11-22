@@ -3,7 +3,7 @@ import { itemWidth, itemHeight } from "../common.js";
 import GameObject from "./game_object.js";
 
 export default class Item extends GameObject {
-    constructor(x, y, vx, vy, radius) {
+    constructor(x, y, vx, vy, radius, type) {
         super(x, y, vx, vy, new CircleCollider(x, y, radius));
         this.radius = radius;
         // this.image = new Image();
@@ -19,6 +19,7 @@ export default class Item extends GameObject {
         this.scale = 0;
         this.checkScale = true;
         this.name = 'item';
+        this.type = type;
 
         this.animation = {
             start: { x: null, y: null },
@@ -29,7 +30,9 @@ export default class Item extends GameObject {
         this.timeStamp = 0;
         this.checkInterpolation = false;
         this.countInterpolation = 0;
-        this.name = 'item';
+
+        this.imageShield = new Image();
+        this.imageShield.src = './img/shield_blue.svg';
     }
 
     update(deltaTime) {
@@ -95,25 +98,50 @@ export default class Item extends GameObject {
         } else if (this.scale <= 0) {
             this.checkScale = true;
         }
-        // this.indexColumn++;
-        // if (this.indexColumn == 6) this.indexColumn = 0;
 
-        context.beginPath();
-        // context.drawImage(this.image, this.indexColumn * this.itemWidthImg, this.indexRow * this.itemHeightImg, this.itemWidthImg, this.itemHeightImg, this.x, this.y, itemWidth, itemWidth);
-        context.fillStyle = 'rgb(255, 255, 100)';
-        context.arc(this.x, this.y, this.radius * 2 / 3, 0, 2 * Math.PI);
-        context.fill();
+        if (this.type == 'add_ball') {
+            
+            // this.indexColumn++;
+            // if (this.indexColumn == 6) this.indexColumn = 0;
+    
+            context.beginPath();
+            // context.drawImage(this.image, this.indexColumn * this.itemWidthImg, this.indexRow * this.itemHeightImg, this.itemWidthImg, this.itemHeightImg, this.x, this.y, itemWidth, itemWidth);
+            context.fillStyle = 'rgb(255, 255, 100)';
+            context.arc(this.x, this.y, this.radius * 2 / 3, 0, 2 * Math.PI);
+            context.fill();
+    
+            context.save();
+            context.beginPath();
+            context.translate(this.x, this.y);
+            context.scale(this.scale, 1);
+            context.lineWidth = 3;
+            context.strokeStyle = 'white';
+            context.arc(0, 0, this.radius, 0, 2 * Math.PI);
+            context.stroke();
+            context.lineWidth = 1;
+            context.restore();
+        } else {
+            context.beginPath();
+            context.drawImage(this.imageShield, this.x - this.radius * 2 / 3, this.y - this.radius * 2 / 3, this.radius * 2 * 2 / 3, this.radius * 2 * 2 / 3);
+            context.fill();
 
-        context.save();
-        context.beginPath();
-        context.translate(this.x, this.y);
-        context.scale(this.scale, 1);
-        context.lineWidth = 3;
-        context.strokeStyle = 'white';
-        context.arc(0, 0, this.radius, 0, 2 * Math.PI);
-        context.stroke();
-        context.lineWidth = 1;
-        context.restore();
+            context.beginPath();
+            context.strokeStyle = 'white';
+            context.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+            context.stroke();
+            
+    
+            // context.save();
+            // context.beginPath();
+            // context.translate(this.x, this.y);
+            // context.scale(this.scale, 1);
+            // context.lineWidth = 3;
+            // context.strokeStyle = 'white';
+            // context.arc(0, 0, this.radius, 0, 2 * Math.PI);
+            // context.stroke();
+            // context.lineWidth = 1;
+            // context.restore();
+        }
     }
 
     checkCollision(other) {

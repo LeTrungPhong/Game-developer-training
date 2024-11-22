@@ -16,8 +16,9 @@ import {
     postY,
     speedBall,
     itemWidth,
-    radiusBall
-} from "../common.js"
+    radiusBall,
+    heightGame
+} from "../common.js";
 import BallManager from "./ball_manager.js";
 import ObstacleManager from "./obstacle_manager.js";
 import InputController from "../input_controller.js";
@@ -37,9 +38,16 @@ export default class GameManager {
         this.postX = postX;
         this.postY = postY;
         this.speed = speedBall;
-
+        // this.checkDownBall = true;
+        this.imageDownBall = new Image();
+        this.imageDownBall.src = './img/angle_down_solid.svg';
+        this.imageDownBall.onload = () => {
+            this.scaleImageDownBall = 1 / 3;
+            this.postYDownBall = (heightScore + heightBorder * 2 + heightGame + canvasHeight - 30) / 2;
+            this.widthDownBall = this.imageDownBall.width * this.scaleImageDownBall;
+            this.heightDownBall = this.imageDownBall.height * this.scaleImageDownBall;
+        };
         this.setCollisionManager();
-
     }
 
     setCollisionManager() {
@@ -94,7 +102,9 @@ export default class GameManager {
         if (this.state == 'end') {
             this.drawGameover(context);
         }
-
+        // if (!this.checkBallMove) {
+        //     this.drawDownBall(context);
+        // }
     }
 
     update(deltaTime) {
@@ -143,6 +153,13 @@ export default class GameManager {
                     }
                 })
             });
+
+            if (this.collisionManager.checkShield == true) {
+                this.collisionManager.checkShield = false;
+                this.ballManager.listBall.forEach((ball) => {
+                    ball.checkShield = true;
+                })
+            }
         }
     }
 
@@ -234,5 +251,17 @@ export default class GameManager {
         context.stroke();
 
         context.restore();
+    }
+
+    drawDownBall(context) {
+        context.beginPath();
+        context.drawImage(this.imageDownBall, canvasWidth / 2 - this.widthDownBall / 2, this.postYDownBall - this.heightDownBall / 2, this.widthDownBall, this.heightDownBall);
+    
+        context.beginPath();
+        context.lineWidth = 3;
+        context.strokeStyle = 'white';
+        context.strokeRect(canvasWidth / 2 - 100 / 2, this.postYDownBall - 40 / 2, 100, 40);
+    
+        context.lineWidth = 1;
     }
 }

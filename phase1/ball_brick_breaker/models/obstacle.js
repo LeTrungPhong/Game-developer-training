@@ -36,8 +36,10 @@ export default class Obstacle extends GameObject {
     }
 
     draw(context) {        
+        const colorHigh = 15;
+
         context.beginPath();
-        context.fillStyle = 'black';
+        context.fillStyle = `rgb(${255 - this.thickness * colorHigh}, ${255 - this.thickness * colorHigh}, ${255 - this.thickness * colorHigh})`;
         context.fillRect(this.x, this.y, this.width, this.height);
 
         context.beginPath();
@@ -45,7 +47,11 @@ export default class Obstacle extends GameObject {
         context.strokeRect(this.x, this.y, this.width, this.height);
 
         context.beginPath();
-        context.fillStyle = `${colorTextItem}`;
+        if (255 - this.thickness * colorHigh > 150) {
+            context.fillStyle = 'black';
+        } else {
+            context.fillStyle = 'white';
+        }
         context.font = '22px Arial';
         context.textAlign = 'center';
         context.textBaseline = 'middle';
