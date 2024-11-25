@@ -34,8 +34,8 @@ export default class Ball extends GameObject {
 
         this.x = this.x + this.vx * deltaTime;
         this.y = this.y + this.vy * deltaTime;
-        this.collider.x = this.x;
-        this.collider.y = this.y;
+        this.collider.x = this.x + this.vx * deltaTime;
+        this.collider.y = this.y + this.vy * deltaTime;
     }
 
     draw(context) {
